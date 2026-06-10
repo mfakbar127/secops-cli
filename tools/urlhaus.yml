@@ -1,0 +1,18 @@
+provider: urlhaus
+name: URLhaus
+description: Public URL malware intelligence lookups.
+functions:
+  lookup_url:
+    description: Look up a URL in URLhaus.
+    args:
+      url:
+        type: string
+        required: true
+        description: URL to look up.
+    request:
+      method: POST
+      url: https://urlhaus-api.abuse.ch/v1/url/
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+      body:
+        url: "${args.url}"

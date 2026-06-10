@@ -1,0 +1,39 @@
+{
+  "name": "secops-cli",
+  "version": "0.1.0",
+  "description": "Run configurable SecOps HTTP tool actions from YAML files.",
+  "type": "module",
+  "bin": {
+    "secops-cli": "./bin/secops-cli.js"
+  },
+  "files": ["bin", "dist", "tools", "README.md"],
+  "scripts": {
+    "build": "bunup && chmod +x bin/secops-cli.js dist/cli.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check . && bunx eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "release": "bun run build && npm publish --provenance"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "picocolors": "^1.1.1",
+    "yaml": "^2.6.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^25.9.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "bunup": "^0.7.0",
+    "eslint": "^9.17.0",
+    "jiti": "^2.7.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}

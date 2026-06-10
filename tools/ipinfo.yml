@@ -1,0 +1,16 @@
+provider: ipinfo
+name: IPinfo
+description: IP enrichment using IPinfo.
+functions:
+  lookup_ip:
+    description: Look up IP geolocation and network metadata.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IP address to look up.
+    request:
+      method: GET
+      url: "https://ipinfo.io/${args.ip}/json"
+      query:
+        token: "${env.IPINFO_TOKEN}"
