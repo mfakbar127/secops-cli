@@ -35,4 +35,35 @@ describe("validateToolSchema", () => {
       ),
     ).toThrow(/Invalid tool YAML/);
   });
+
+  it("applies root http_header values over request headers", () => {
+    const tool = validateToolSchema(
+      {
+        provider: "demo",
+        http_header: {
+          Authorization: "Bearer ${env.DEMO_TOKEN}",
+          Accept: "application/json",
+        },
+        functions: {
+          ping: {
+            request: {
+              method: "GET",
+              url: "https://example.com",
+              headers: {
+                Authorization: "Bearer per-function",
+                "X-Function": "ping",
+              },
+            },
+          },
+        },
+      },
+      "demo.yml",
+    );
+
+    expect(tool.functions.ping?.request.headers).toEqual({
+      Authorization: "Bearer ${env.DEMO_TOKEN}",
+      Accept: "application/json",
+      "X-Function": "ping",
+    });
+  });
 });

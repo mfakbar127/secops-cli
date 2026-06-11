@@ -35,6 +35,7 @@ export type ToolDefinition = {
   provider: string;
   name?: string | undefined;
   description?: string | undefined;
+  http_header?: Record<string, TemplateValue> | undefined;
   functions: Record<string, ToolFunction>;
   sourcePath: string;
 };

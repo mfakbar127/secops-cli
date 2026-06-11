@@ -1,25 +1,25 @@
 provider: abuseipdb
 name: AbuseIPDB
 description: IP reputation checks using AbuseIPDB.
+http_header:
+  Key: "${env.ABUSEIPDB_API_KEY}"
 functions:
-  check_ip:
-    description: Check an IP address reputation score.
+  lookup_ip_address:
+    description: Lookup an IP address in AbuseIPDB.
     args:
-      ip:
+      ip_address:
         type: string
         required: true
-        description: IP address to check.
-      maxAgeInDays:
+        description: IP address to lookup.
+      max_age_in_days:
         type: number
         required: false
-        default: 90
-        description: Maximum report age in days.
+        default: 30
+        description: Maximum age of the IP address in days.
     request:
       method: GET
       url: https://api.abuseipdb.com/api/v2/check
-      headers:
-        Key: "${env.ABUSEIPDB_API_KEY}"
-        Accept: application/json
       query:
-        ipAddress: "${args.ip}"
-        maxAgeInDays: "${args.maxAgeInDays}"
+        ipAddress: "${args.ip_address}"
+        verbose: true
+        maxAgeInDays: "${args.max_age_in_days}"

@@ -1,0 +1,49 @@
+provider: sublime
+name: Sublime
+description: Message and URL analysis using Sublime.
+http_header:
+  Authorization: "Bearer ${env.SUBLIME_API_KEY}"
+functions:
+  analyze_eml:
+    description: Analyze an EML message against active detection rules and ML attack score in Sublime.
+    args:
+      eml_base64:
+        type: string
+        required: true
+        description: Base64-encoded EML file.
+    request:
+      method: POST
+      url: "${env.SUBLIME_BASE_URL}/v0/messages/analyze"
+      body:
+        raw_message: "${args.eml_base64}"
+        run_active_detection_rules: true
+  analyze_url:
+    description: Analyze a URL with ML link analysis in Sublime.
+    args:
+      url:
+        type: string
+        required: true
+        description: URL to analyze.
+    request:
+      method: POST
+      url: "${env.SUBLIME_BASE_URL}/v0/enrichment/link_analysis/evaluate"
+      body:
+        url: "${args.url}"
+        no_logo_detect: false
+  binexplode:
+    description: Scan a file with BinExplode.
+    args:
+      file_base64:
+        type: string
+        required: true
+        description: Base64-encoded file.
+      file_name:
+        type: string
+        required: true
+        description: Name of the file.
+    request:
+      method: POST
+      url: "${env.SUBLIME_BASE_URL}/v0/binexplode/scan"
+      body:
+        file_contents: "${args.file_base64}"
+        file_name: "${args.file_name}"

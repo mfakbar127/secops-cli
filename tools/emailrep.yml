@@ -1,0 +1,24 @@
+provider: emailrep
+name: EmailRep
+description: Email reputation lookups using EmailRep.
+http_header:
+  Key: "${env.EMAILREP_API_KEY}"
+  User-Agent: secops-cli-emailrep-lookup
+functions:
+  lookup_email:
+    description: Lookup an email address in the EmailRep database.
+    args:
+      email:
+        type: string
+        required: true
+        description: Email to lookup.
+      include_summary:
+        type: boolean
+        required: false
+        default: true
+        description: Whether to include the summary of the email.
+    request:
+      method: GET
+      url: "https://emailrep.io/${args.email}"
+      query:
+        include_summary: "${args.include_summary}"

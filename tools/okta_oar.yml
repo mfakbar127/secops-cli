@@ -1,0 +1,75 @@
+provider: okta_oar
+name: Okta Access Requests
+description: Okta Access Request ticket operations.
+http_header:
+  Authorization: "SSWS ${env.OKTA_API_TOKEN}"
+  Accept: application/json
+  Content-Type: application/json
+functions:
+  create_message:
+    description: Create a message in an Okta Access Request ticket.
+    args:
+      request_id:
+        type: string
+        required: true
+        description: ID of the access request to add message to.
+      message:
+        type: string
+        required: true
+        description: Message content to add to the request.
+    request:
+      method: POST
+      url: "${env.OKTA_OAR_BASE_URL}/governance/api/v1/requests/${args.request_id}/messages"
+      body:
+        message: "${args.message}"
+  get_requests:
+    description: Get Okta Access Request tickets with optional filtering and pagination.
+    args:
+      after:
+        type: string
+        required: false
+        default: ""
+        description: Pagination cursor for retrieving next set of results.
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: Filter expression for requests.
+      limit:
+        type: number
+        required: false
+        default: 20
+        description: Number of requests to return.
+      order_by:
+        type: string
+        required: false
+        default: ""
+        description: Field to order results by.
+    request:
+      method: GET
+      url: "${env.OKTA_OAR_BASE_URL}/governance/api/v1/requests"
+      query:
+        after: "${args.after}"
+        filter: "${args.filter}"
+        limit: "${args.limit}"
+        orderBy: "${args.order_by}"
+  get_specific_request:
+    description: Get a specific Okta Access Request ticket by ID.
+    args:
+      request_id:
+        type: string
+        required: true
+        description: ID of the access request to retrieve.
+    request:
+      method: GET
+      url: "${env.OKTA_OAR_BASE_URL}/governance/api/v1/requests/${args.request_id}"
+  get_user:
+    description: Get an Okta user by ID.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID, login, or email of the user to retrieve.
+    request:
+      method: GET
+      url: "${env.OKTA_OAR_BASE_URL}/api/v1/users/${args.user_id}"

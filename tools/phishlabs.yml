@@ -1,0 +1,63 @@
+provider: phishlabs
+name: PhishLabs
+description: Case and feed data lookups using PhishLabs APIs.
+http_header:
+  Authorization: "Basic ${env.PL_BASIC_AUTH}"
+functions:
+  get_case_data:
+    description: Get PhishLabs case API data.
+    args:
+      case_status:
+        type: string
+        required: false
+        default: Pending Input
+        description: Filter cases based on case status.
+      case_type:
+        type: string
+        required: false
+        default: ""
+        description: Filter cases by case type.
+      max_records:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of cases to return.
+    request:
+      method: GET
+      url: https://caseapi.phishlabs.com/v1/data/cases
+      query:
+        caseStatus: "${args.case_status}"
+        caseType: "${args.case_type}"
+        maxRecords: "${args.max_records}"
+  get_feed_data:
+    description: Get PhishLabs feed API data.
+    args:
+      incident_status:
+        type: string
+        required: false
+        default: Requires Input
+        description: The incident status as it appears in the Web App.
+      from_date:
+        type: string
+        required: false
+        default: ""
+        description: Start date of date range, for example 2023-01-01 10:00.
+      to_date:
+        type: string
+        required: false
+        default: ""
+        description: End date of date range, for example 2023-01-07 10:00.
+      grpcatid:
+        type: number
+        required: false
+        default: 0
+        description: Integer that maps to the type of incident to return.
+    request:
+      method: GET
+      url: https://feed.phishlabs.com/bafeed.get
+      query:
+        custid: "${env.PL_CUSTOMER_ID}"
+        incidentstatus: "${args.incident_status}"
+        fromdate: "${args.from_date}"
+        todate: "${args.to_date}"
+        grpcatid: "${args.grpcatid}"

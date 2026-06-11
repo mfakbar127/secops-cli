@@ -1,0 +1,74 @@
+provider: anyrun
+name: ANY.RUN
+description: Malware sandbox analysis using ANY.RUN.
+http_header:
+  Accept: application/json
+  X-API-Key: "${env.ANYRUN_API_KEY}"
+functions:
+  get_analysis:
+    description: Retrieve details for an ANY.RUN analysis by ID.
+    args:
+      analysis_id:
+        type: string
+        required: true
+        description: Identifier of the analysis task.
+    request:
+      method: GET
+      url: "https://api.any.run/v1/analysis/${args.analysis_id}"
+  list_analyses:
+    description: List ANY.RUN analyses with optional status filtering.
+    args:
+      status:
+        type: string
+        required: false
+        default: ""
+        description: Optional analysis status to filter by, for example finished or running.
+      limit:
+        type: number
+        required: false
+        default: 50
+        description: Maximum number of analyses to return.
+      offset:
+        type: number
+        required: false
+        default: 0
+        description: Pagination offset.
+    request:
+      method: GET
+      url: https://api.any.run/v1/analysis
+      query:
+        status: "${args.status}"
+        limit: "${args.limit}"
+        offset: "${args.offset}"
+  submit_analysis:
+    description: Create an ANY.RUN analysis task for a file hash, URL, or file reference.
+    args:
+      object_type:
+        type: string
+        required: false
+        default: url
+        description: Type of object to analyze, such as url, hash, or file.
+      object_value:
+        type: string
+        required: true
+        description: Value of the object to analyze, such as URL, hash, or file UUID.
+      platform:
+        type: string
+        required: false
+        default: win10
+        description: Execution environment to use.
+      interactive:
+        type: boolean
+        required: false
+        default: false
+        description: Whether to run the analysis in interactive mode.
+    request:
+      method: POST
+      url: https://api.any.run/v1/analysis
+      headers:
+        Content-Type: application/json
+      body:
+        object_type: "${args.object_type}"
+        object: "${args.object_value}"
+        platform: "${args.platform}"
+        interactive: "${args.interactive}"

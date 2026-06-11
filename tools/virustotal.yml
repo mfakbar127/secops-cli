@@ -1,0 +1,54 @@
+provider: virustotal
+name: VirusTotal
+description: Threat intelligence lookups using VirusTotal.
+http_header:
+  x-apikey: "${env.VIRUSTOTAL_API_KEY}"
+functions:
+  list_threats:
+    description: List threats from VirusTotal.
+    args:
+      filter:
+        type: string
+        required: true
+        description: Filter to apply to the list of threats.
+      limit:
+        type: number
+        required: false
+        default: 10
+        description: Maximum number of threats to return.
+    request:
+      method: GET
+      url: https://www.virustotal.com/api/v3/collections
+      query:
+        filter: "${args.filter}"
+        limit: "${args.limit}"
+  lookup_domain:
+    description: Get VirusTotal report for a domain.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to lookup.
+    request:
+      method: GET
+      url: "https://www.virustotal.com/api/v3/domains/${args.domain}"
+  lookup_file_hash:
+    description: Get VirusTotal report for a file hash.
+    args:
+      file_hash:
+        type: string
+        required: true
+        description: File hash to lookup.
+    request:
+      method: GET
+      url: "https://www.virustotal.com/api/v3/files/${args.file_hash}"
+  lookup_ip_address:
+    description: Get VirusTotal report for an IP address.
+    args:
+      ip_address:
+        type: string
+        required: true
+        description: IP address to lookup.
+    request:
+      method: GET
+      url: "https://www.virustotal.com/api/v3/ip_addresses/${args.ip_address}"

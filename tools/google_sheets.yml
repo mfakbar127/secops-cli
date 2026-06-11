@@ -1,0 +1,44 @@
+provider: google_sheets
+name: Google Sheets
+description: Google Sheets spreadsheet operations.
+http_header:
+  Authorization: "Bearer ${env.GOOGLE_SHEETS_SERVICE_TOKEN}"
+  Content-Type: application/json
+functions:
+  copy_sheet:
+    description: Copy a sheet to another spreadsheet.
+    args:
+      spreadsheet_id:
+        type: string
+        required: true
+        description: Source spreadsheet ID.
+      sheet_id:
+        type: number
+        required: true
+        description: ID of the sheet to copy.
+      destination_spreadsheet_id:
+        type: string
+        required: true
+        description: Destination spreadsheet ID.
+    request:
+      method: POST
+      url: "https://sheets.googleapis.com/v4/spreadsheets/${args.spreadsheet_id}/sheets/${args.sheet_id}:copyTo"
+      body:
+        destinationSpreadsheetId: "${args.destination_spreadsheet_id}"
+  get_spreadsheet:
+    description: Retrieve spreadsheet metadata.
+    args:
+      spreadsheet_id:
+        type: string
+        required: true
+        description: Spreadsheet ID to fetch.
+      include_grid_data:
+        type: boolean
+        required: false
+        default: false
+        description: Return grid data along with metadata.
+    request:
+      method: GET
+      url: "https://sheets.googleapis.com/v4/spreadsheets/${args.spreadsheet_id}"
+      query:
+        includeGridData: "${args.include_grid_data}"

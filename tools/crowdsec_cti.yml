@@ -1,0 +1,16 @@
+provider: crowdsec_cti
+name: CrowdSec CTI
+description: Threat intelligence lookups using CrowdSec CTI.
+http_header:
+  x-api-key: "${env.CTI_API_KEY}"
+functions:
+  lookup_ip_address:
+    description: Get threat intel report for an IP address from CrowdSec.
+    args:
+      ip_address:
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to analyze or scan.
+    request:
+      method: GET
+      url: "https://cti.api.crowdsec.net/v2/smoke/${args.ip_address}"

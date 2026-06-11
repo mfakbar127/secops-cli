@@ -1,0 +1,48 @@
+provider: hybrid_analysis
+name: Hybrid Analysis
+description: Malware analysis lookups using Hybrid Analysis.
+http_header:
+  accept: application/json
+  api-key: "${env.HYBRID_ANALYSIS_API_KEY}"
+  user-agent: secops-cli
+functions:
+  get_sandbox_report:
+    description: Get sandbox report summary from Hybrid Analysis.
+    args:
+      job_id:
+        type: string
+        required: true
+        description: Job ID to get the report for.
+    request:
+      method: GET
+      url: "https://www.hybrid-analysis.com/api/v2/report/${args.job_id}/summary"
+  lookup_file_hash:
+    description: Lookup a file with Hybrid Analysis.
+    args:
+      sha256:
+        type: string
+        required: true
+        description: SHA256 hash of the file to lookup.
+    request:
+      method: GET
+      url: "https://www.hybrid-analysis.com/api/v2/overview/${args.sha256}/summary"
+  submit_url:
+    description: Submit a URL for analysis with Hybrid Analysis.
+    args:
+      url:
+        type: string
+        required: true
+        description: URL to submit for analysis.
+      environment_id:
+        type: number
+        required: false
+        default: 160
+        description: Hybrid Analysis environment ID.
+    request:
+      method: POST
+      url: https://www.hybrid-analysis.com/api/v2/submit/url
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+      body:
+        url: "${args.url}"
+        environment_id: "${args.environment_id}"

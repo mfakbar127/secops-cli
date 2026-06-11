@@ -1,0 +1,24 @@
+provider: urlscan
+name: URLScan
+description: URL scanning using urlscan.io.
+http_header:
+  API-key: "${env.URLSCAN_API_KEY}"
+functions:
+  lookup_url:
+    description: Lookup a URL using URLScan.
+    args:
+      url:
+        type: string
+        required: true
+        description: URL to lookup.
+      visibility:
+        type: string
+        required: false
+        default: private
+        description: Visibility of the scan.
+    request:
+      method: POST
+      url: https://urlscan.io/api/v1/scan/
+      body:
+        url: "${args.url}"
+        visibility: "${args.visibility}"

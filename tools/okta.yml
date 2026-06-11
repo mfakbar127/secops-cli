@@ -1,0 +1,131 @@
+provider: okta
+name: Okta
+description: Okta user and group operations.
+http_header:
+  Authorization: "SSWS ${env.OKTA_API_TOKEN}"
+  Accept: application/json
+  Content-Type: application/json
+functions:
+  activate_user:
+    description: Activate a user account in Okta.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID, login, or email of the user to activate.
+      send_email:
+        type: boolean
+        required: false
+        default: true
+        description: Whether to send an activation email to the user.
+    request:
+      method: POST
+      url: "${env.OKTA_BASE_URL}/api/v1/users/${args.user_id}/lifecycle/activate"
+      query:
+        sendEmail: "${args.send_email}"
+  add_to_group:
+    description: Add a user to a specific group in Okta.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID, login, or email to add to the group.
+      group_id:
+        type: string
+        required: true
+        description: ID of the group to add the user to.
+    request:
+      method: PUT
+      url: "${env.OKTA_BASE_URL}/api/v1/groups/${args.group_id}/users/${args.user_id}"
+  clear_user_sessions:
+    description: Clear all active sessions for a user in Okta.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID, login, or email of the user whose sessions to clear.
+    request:
+      method: DELETE
+      url: "${env.OKTA_BASE_URL}/api/v1/users/${args.user_id}/sessions"
+  get_user:
+    description: Retrieve a specific user by ID, login, or email from Okta.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID, login, or email of the user to retrieve.
+    request:
+      method: GET
+      url: "${env.OKTA_BASE_URL}/api/v1/users/${args.user_id}"
+  list_users:
+    description: List users in Okta with optional filtering.
+    args:
+      limit:
+        type: number
+        required: false
+        default: 200
+        description: Number of users to return.
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: Filter expression for users.
+    request:
+      method: GET
+      url: "${env.OKTA_BASE_URL}/api/v1/users"
+      query:
+        limit: "${args.limit}"
+        filter: "${args.filter}"
+  list_groups_in_org:
+    description: List groups in your Okta organization with optional filtering.
+    args:
+      limit:
+        type: number
+        required: false
+        default: 200
+        description: Number of groups to return.
+      search:
+        type: string
+        required: false
+        default: ""
+        description: Search expression for filtering groups.
+    request:
+      method: GET
+      url: "${env.OKTA_BASE_URL}/api/v1/groups"
+      query:
+        limit: "${args.limit}"
+        search: "${args.search}"
+  remove_from_group:
+    description: Remove a user from a specific group in Okta.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID, login, or email to remove from the group.
+      group_id:
+        type: string
+        required: true
+        description: ID of the group to remove the user from.
+    request:
+      method: DELETE
+      url: "${env.OKTA_BASE_URL}/api/v1/groups/${args.group_id}/users/${args.user_id}"
+  suspend_user:
+    description: Suspend an Okta user.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: ID of an existing user.
+    request:
+      method: POST
+      url: "${env.OKTA_BASE_URL}/api/v1/users/${args.user_id}/lifecycle/suspend"
+  unsuspend_user:
+    description: Unsuspend an Okta user.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: ID of the user to unsuspend.
+    request:
+      method: POST
+      url: "${env.OKTA_BASE_URL}/api/v1/users/${args.user_id}/lifecycle/unsuspend"

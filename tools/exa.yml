@@ -1,0 +1,143 @@
+provider: exa
+name: Exa
+description: Search and answer APIs using Exa.
+http_header:
+  Content-Type: application/json
+  x-api-key: "${env.EXA_API_KEY}"
+functions:
+  answer:
+    description: Answer a question with Exa search-grounded citations.
+    args:
+      query:
+        type: string
+        required: true
+        description: Natural-language question or instructions for the request.
+      text:
+        type: boolean
+        required: false
+        default: false
+        description: Return full page text in citations when true.
+    request:
+      method: POST
+      url: https://api.exa.ai/answer
+      body:
+        query: "${args.query}"
+        text: "${args.text}"
+  deep_research:
+    description: Run Exa deep-reasoning search for research-style discovery and synthesis.
+    args:
+      query:
+        type: string
+        required: true
+        description: Natural language research query or instructions.
+      numResults:
+        type: number
+        required: false
+        default: 10
+        description: Number of results to return.
+    request:
+      method: POST
+      url: https://api.exa.ai/search
+      body:
+        query: "${args.query}"
+        type: deep-reasoning
+        numResults: "${args.numResults}"
+  search:
+    description: Search the web with Exa.
+    args:
+      query:
+        type: string
+        required: true
+        description: Natural language search query.
+      type:
+        type: string
+        required: false
+        default: auto
+        description: Search method such as auto, instant, fast, deep-lite, deep, or deep-reasoning.
+      numResults:
+        type: number
+        required: false
+        default: 10
+        description: Number of results to return.
+    request:
+      method: POST
+      url: https://api.exa.ai/search
+      body:
+        query: "${args.query}"
+        type: "${args.type}"
+        numResults: "${args.numResults}"
+  search_companies:
+    description: Search Exa's company index for company profiles.
+    args:
+      query:
+        type: string
+        required: true
+        description: Natural language company search query.
+      type:
+        type: string
+        required: false
+        default: auto
+        description: Search method.
+      numResults:
+        type: number
+        required: false
+        default: 10
+        description: Number of company results to return.
+    request:
+      method: POST
+      url: https://api.exa.ai/search
+      body:
+        query: "${args.query}"
+        category: company
+        type: "${args.type}"
+        numResults: "${args.numResults}"
+  search_news:
+    description: Search Exa's news index.
+    args:
+      query:
+        type: string
+        required: true
+        description: Natural language news query.
+      type:
+        type: string
+        required: false
+        default: auto
+        description: Search method.
+      numResults:
+        type: number
+        required: false
+        default: 10
+        description: Number of news results to return.
+    request:
+      method: POST
+      url: https://api.exa.ai/search
+      body:
+        query: "${args.query}"
+        category: news
+        type: "${args.type}"
+        numResults: "${args.numResults}"
+  search_people:
+    description: Search Exa's people index.
+    args:
+      query:
+        type: string
+        required: true
+        description: Natural language people search query.
+      type:
+        type: string
+        required: false
+        default: auto
+        description: Search method.
+      numResults:
+        type: number
+        required: false
+        default: 10
+        description: Number of people results to return.
+    request:
+      method: POST
+      url: https://api.exa.ai/search
+      body:
+        query: "${args.query}"
+        category: people
+        type: "${args.type}"
+        numResults: "${args.numResults}"

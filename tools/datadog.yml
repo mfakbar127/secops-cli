@@ -1,0 +1,39 @@
+provider: datadog
+name: Datadog
+description: Datadog security monitoring lookups.
+http_header:
+  DD-API-KEY: "${env.DATADOG_API_KEY}"
+  DD-APPLICATION-KEY: "${env.DATADOG_APP_KEY}"
+functions:
+  list_security_signals:
+    description: Query for Datadog security signals.
+    args:
+      start_time:
+        type: string
+        required: true
+        description: Start time for the query, inclusive.
+      end_time:
+        type: string
+        required: true
+        description: End time for the query, exclusive.
+      query:
+        type: string
+        required: false
+        default: ""
+        description: Datadog search query.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of alerts to return.
+    request:
+      method: POST
+      url: "${env.DATADOG_BASE_URL}/api/v2/security_monitoring/signals/search"
+      body:
+        filter:
+          from: "${args.start_time}"
+          to: "${args.end_time}"
+          query: "${args.query}"
+        page:
+          limit: "${args.limit}"
+        sort: timestamp

@@ -1,0 +1,205 @@
+provider: jira
+name: Jira
+description: Jira issue and metadata operations.
+http_header:
+  Authorization: "Basic ${env.JIRA_BASIC_AUTH}"
+  Content-Type: application/json
+functions:
+  add_issue_comment:
+    description: Add a comment to an issue in Jira.
+    args:
+      issue_id_or_key:
+        type: string
+        required: true
+        description: ID or key of the issue to add a comment to.
+      comment:
+        type: string
+        required: true
+        description: Comment to add to the issue.
+    request:
+      method: POST
+      url: "${env.JIRA_BASE_URL}/rest/api/3/issue/${args.issue_id_or_key}/comment"
+      body:
+        body:
+          version: 1
+          type: doc
+          content:
+            - type: paragraph
+              content:
+                - type: text
+                  text: "${args.comment}"
+  assign_issue:
+    description: Assign an issue to a user.
+    args:
+      issue_key:
+        type: string
+        required: true
+        description: Jira issue key.
+      user_id:
+        type: string
+        required: true
+        description: Jira user ID.
+    request:
+      method: PUT
+      url: "${env.JIRA_BASE_URL}/rest/api/3/issue/${args.issue_key}/assignee"
+      body:
+        accountId: "${args.user_id}"
+  get_fields:
+    description: Get a list of fields from Jira.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/field"
+  get_issue:
+    description: Get an issue from Jira by ID or key.
+    args:
+      issue_id_or_key:
+        type: string
+        required: true
+        description: ID or key of the issue to get.
+      fields:
+        type: string
+        required: false
+        default: "*all"
+        description: Comma-separated list of fields to return.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/issue/${args.issue_id_or_key}"
+      query:
+        fields: "${args.fields}"
+  get_priorities:
+    description: Get a list of priorities from Jira for a given priority scheme.
+    args:
+      priority_scheme_id:
+        type: string
+        required: true
+        description: Jira priority scheme ID.
+      limit:
+        type: number
+        required: false
+        default: 50
+        description: Maximum number of priorities to return.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/priorityscheme/${args.priority_scheme_id}/priorities"
+      query:
+        maxResults: "${args.limit}"
+  get_priority_schemes:
+    description: Get a list of priority schemes from Jira.
+    args:
+      limit:
+        type: number
+        required: false
+        default: 50
+        description: Maximum number of priority schemes to return.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/priorityscheme"
+      query:
+        maxResults: "${args.limit}"
+  get_projects:
+    description: Get a list of projects from Jira.
+    args:
+      limit:
+        type: number
+        required: false
+        default: 50
+        description: Maximum number of projects to return.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/project/search"
+      query:
+        maxResults: "${args.limit}"
+  get_transitions:
+    description: Get a list of available transitions for an issue.
+    args:
+      issue_id_or_key:
+        type: string
+        required: true
+        description: ID or key of the issue to get transitions for.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/issue/${args.issue_id_or_key}/transitions"
+  get_user_id:
+    description: Get a user ID from Jira.
+    args:
+      username:
+        type: string
+        required: true
+        description: Jira username or email address.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/user/search"
+      query:
+        query: "${args.username}"
+        maxResults: 1
+  search_issues:
+    description: Search for issues in Jira using JQL.
+    args:
+      jql:
+        type: string
+        required: true
+        description: JQL query to search for issues.
+      fields:
+        type: string
+        required: false
+        default: id
+        description: Comma-separated list of fields to return.
+      max_results:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of results to return.
+      next_page:
+        type: string
+        required: false
+        default: ""
+        description: Next page token.
+    request:
+      method: GET
+      url: "${env.JIRA_BASE_URL}/rest/api/3/search/jql"
+      query:
+        fields: "${args.fields}"
+        jql: "${args.jql}"
+        maxResults: "${args.max_results}"
+        nextPageToken: "${args.next_page}"
+  update_issue_description:
+    description: Update the description of an existing issue in Jira.
+    args:
+      issue_id_or_key:
+        type: string
+        required: true
+        description: ID or key of the issue to update.
+      description:
+        type: string
+        required: true
+        description: Updated description of the incident.
+    request:
+      method: PUT
+      url: "${env.JIRA_BASE_URL}/rest/api/3/issue/${args.issue_id_or_key}"
+      body:
+        fields:
+          description:
+            version: 1
+            type: doc
+            content:
+              - type: paragraph
+                content:
+                  - type: text
+                    text: "${args.description}"
+  update_issue_status:
+    description: Update the status of an issue.
+    args:
+      issue_id_or_key:
+        type: string
+        required: true
+        description: ID or key of the issue to update.
+      transition_id:
+        type: string
+        required: true
+        description: ID of the transition to perform.
+    request:
+      method: POST
+      url: "${env.JIRA_BASE_URL}/rest/api/3/issue/${args.issue_id_or_key}/transitions"
+      body:
+        transition:
+          id: "${args.transition_id}"

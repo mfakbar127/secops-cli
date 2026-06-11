@@ -1,0 +1,111 @@
+provider: microsoft_defender_endpoint
+name: Microsoft Defender for Endpoint
+description: Microsoft Defender for Endpoint alert, incident, and machine lookups.
+http_header:
+  Authorization: "Bearer ${env.MICROSOFT_DEFENDER_ENDPOINT_TOKEN}"
+functions:
+  get_alert:
+    description: Retrieve a Microsoft Defender for Endpoint alert by ID.
+    args:
+      alert_id:
+        type: string
+        required: true
+        description: Alert ID to retrieve.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_DEFENDER_ENDPOINT_BASE_URL}/api/alerts/${args.alert_id}"
+  list_alerts:
+    description: List Microsoft Defender for Endpoint alerts.
+    args:
+      top:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of alerts to return.
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: OData filter expression to apply.
+      order_by:
+        type: string
+        required: false
+        default: ""
+        description: OData order by clause.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_DEFENDER_ENDPOINT_BASE_URL}/api/alerts"
+      query:
+        "$top": "${args.top}"
+        "$filter": "${args.filter}"
+        "$orderby": "${args.order_by}"
+  get_incident:
+    description: Retrieve a Microsoft Defender for Endpoint incident by ID.
+    args:
+      incident_id:
+        type: string
+        required: true
+        description: Incident ID to retrieve.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_DEFENDER_ENDPOINT_BASE_URL}/api/incidents/${args.incident_id}"
+  list_incidents:
+    description: List Microsoft Defender for Endpoint incidents.
+    args:
+      top:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of incidents to return.
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: OData filter expression to apply.
+      order_by:
+        type: string
+        required: false
+        default: ""
+        description: OData order by clause.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_DEFENDER_ENDPOINT_BASE_URL}/api/incidents"
+      query:
+        "$top": "${args.top}"
+        "$filter": "${args.filter}"
+        "$orderby": "${args.order_by}"
+  get_machine:
+    description: Retrieve detailed information about a device from Microsoft Defender for Endpoint.
+    args:
+      machine_id:
+        type: string
+        required: true
+        description: Machine ID to retrieve.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_DEFENDER_ENDPOINT_BASE_URL}/api/machines/${args.machine_id}"
+  list_machines:
+    description: List Microsoft Defender for Endpoint machines.
+    args:
+      top:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of machines to return.
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: OData filter expression to apply.
+      order_by:
+        type: string
+        required: false
+        default: ""
+        description: OData order by clause.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_DEFENDER_ENDPOINT_BASE_URL}/api/machines"
+      query:
+        "$top": "${args.top}"
+        "$filter": "${args.filter}"
+        "$orderby": "${args.order_by}"

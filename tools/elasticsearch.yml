@@ -1,0 +1,36 @@
+provider: elasticsearch
+name: Elasticsearch
+description: Elasticsearch cluster queries.
+http_header:
+  Authorization: "ApiKey ${env.ELASTIC_API_KEY}"
+functions:
+  list_indexes:
+    description: List all indexes in the Elasticsearch cluster.
+    request:
+      method: GET
+      url: "${env.ELASTICSEARCH_BASE_URL}/_cat/indices?format=json"
+  search_events:
+    description: Search events from Elasticsearch using query DSL.
+    args:
+      index:
+        type: string
+        required: false
+        default: _search
+        description: Search path, such as _search or index-name/_search.
+      query:
+        type: string
+        required: true
+        description: Elasticsearch query DSL as a JSON string.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of events to return.
+    request:
+      method: POST
+      url: "${env.ELASTICSEARCH_BASE_URL}/${args.index}"
+      headers:
+        Content-Type: application/json
+      body:
+        size: "${args.limit}"
+        query: "${args.query}"

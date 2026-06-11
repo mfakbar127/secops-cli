@@ -1,0 +1,28 @@
+provider: leakcheck
+name: LeakCheck
+description: Credential leak lookups using LeakCheck.
+http_header:
+  x-api-key: "${env.LEAKCHECK_API_KEY}"
+functions:
+  search_domain_leak:
+    description: Retrieve leaks linked to a domain name.
+    args:
+      domain_name:
+        type: string
+        required: true
+        description: Domain name to search for leaks.
+    request:
+      method: GET
+      url: "https://leakcheck.io/api/v2/query/${args.domain_name}"
+      query:
+        type: domain
+  search_email_leak:
+    description: Retrieve leaks linked to an email address.
+    args:
+      email_address:
+        type: string
+        required: true
+        description: Email address to search for leaks.
+    request:
+      method: GET
+      url: "https://leakcheck.io/api/v2/query/${args.email_address}"

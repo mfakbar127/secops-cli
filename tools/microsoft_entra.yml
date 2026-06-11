@@ -1,0 +1,115 @@
+provider: microsoft_entra
+name: Microsoft Entra ID
+description: Microsoft Graph user and group lookups for Entra ID.
+http_header:
+  Authorization: "Bearer ${env.MICROSOFT_ENTRA_TOKEN}"
+functions:
+  get_group:
+    description: Retrieve details for a Microsoft Entra ID group.
+    args:
+      group_id:
+        type: string
+        required: true
+        description: The unique identifier of the group to retrieve.
+      api_version:
+        type: string
+        required: false
+        default: v1.0
+        description: Microsoft Graph API version.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/${args.api_version}/groups/${args.group_id}"
+  list_groups:
+    description: List Microsoft Entra ID groups.
+    args:
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: Optional OData filter expression.
+      search:
+        type: string
+        required: false
+        default: ""
+        description: Optional search phrase.
+      top:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of results to return.
+      api_version:
+        type: string
+        required: false
+        default: v1.0
+        description: Microsoft Graph API version.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/${args.api_version}/groups"
+      query:
+        "$filter": "${args.filter}"
+        "$search": "${args.search}"
+        "$top": "${args.top}"
+  get_user:
+    description: Retrieve details for a Microsoft Entra ID user.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: The unique identifier of the user to retrieve.
+      api_version:
+        type: string
+        required: false
+        default: v1.0
+        description: Microsoft Graph API version.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/${args.api_version}/users/${args.user_id}"
+  get_user_id_by_email:
+    description: Get a user's ID by searching for their email address.
+    args:
+      email:
+        type: string
+        required: true
+        description: The email address to search for.
+      api_version:
+        type: string
+        required: false
+        default: v1.0
+        description: Microsoft Graph API version.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/${args.api_version}/users"
+      query:
+        "$filter": "mail eq '${args.email}' or userPrincipalName eq '${args.email}'"
+        "$select": id
+        "$top": 1
+  list_users:
+    description: List Microsoft Entra ID users.
+    args:
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: Optional OData filter expression.
+      search:
+        type: string
+        required: false
+        default: ""
+        description: Optional search phrase.
+      top:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of results to return.
+      api_version:
+        type: string
+        required: false
+        default: v1.0
+        description: Microsoft Graph API version.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/${args.api_version}/users"
+      query:
+        "$filter": "${args.filter}"
+        "$search": "${args.search}"
+        "$top": "${args.top}"

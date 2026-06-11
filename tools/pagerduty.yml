@@ -1,0 +1,158 @@
+provider: pagerduty
+name: PagerDuty
+description: PagerDuty incidents, schedules, users, and Events API operations.
+http_header:
+  Authorization: "Token token=${env.PAGERDUTY_API_KEY}"
+  Content-Type: application/json
+functions:
+  get_all_schedules:
+    description: Get all on-call schedules.
+    args:
+      query:
+        type: string
+        required: false
+        default: ""
+        description: Filter schedules by name.
+    request:
+      method: GET
+      url: https://api.pagerduty.com/schedules
+      query:
+        query: "${args.query}"
+  get_contact_methods:
+    description: Get contact methods in PagerDuty.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: The ID of the user.
+    request:
+      method: GET
+      url: "https://api.pagerduty.com/users/${args.user_id}/contact_methods"
+  get_incident_data:
+    description: Show detailed information about an incident.
+    args:
+      incident_id:
+        type: string
+        required: true
+        description: The ID of the incident.
+    request:
+      method: GET
+      url: "https://api.pagerduty.com/incidents/${args.incident_id}"
+  get_incidents:
+    description: List existing incidents.
+    args:
+      incident_key:
+        type: string
+        required: false
+        default: ""
+        description: Incident de-duplication key.
+      status:
+        type: string
+        required: false
+        default: ""
+        description: Filter incidents by status.
+      since:
+        type: string
+        required: false
+        default: ""
+        description: Start of date range.
+      until:
+        type: string
+        required: false
+        default: ""
+        description: End of date range.
+    request:
+      method: GET
+      url: https://api.pagerduty.com/incidents
+      query:
+        incident_key: "${args.incident_key}"
+        statuses[]: "${args.status}"
+        since: "${args.since}"
+        until: "${args.until}"
+  get_user_notification_rules:
+    description: Get the notification rules of a PagerDuty user.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: The ID of the user.
+    request:
+      method: GET
+      url: "https://api.pagerduty.com/users/${args.user_id}/notification_rules"
+  trigger_event:
+    description: Trigger an event to report a new problem.
+    args:
+      service_key:
+        type: string
+        required: true
+        description: PagerDuty Events API routing key.
+      severity:
+        type: string
+        required: true
+        description: Event severity.
+      summary:
+        type: string
+        required: true
+        description: Brief text summary of the event.
+      source:
+        type: string
+        required: true
+        description: Unique location of the affected system.
+      incident_key:
+        type: string
+        required: false
+        default: ""
+        description: Incident de-duplication key.
+    request:
+      method: POST
+      url: https://events.pagerduty.com/v2/enqueue
+      headers:
+        Accept: application/json
+      body:
+        event_action: trigger
+        routing_key: "${args.service_key}"
+        dedup_key: "${args.incident_key}"
+        payload:
+          summary: "${args.summary}"
+          source: "${args.source}"
+          severity: "${args.severity}"
+  acknowledge_event:
+    description: Acknowledge an existing event in PagerDuty.
+    args:
+      incident_key:
+        type: string
+        required: true
+        description: Identifies the alert.
+      service_key:
+        type: string
+        required: true
+        description: PagerDuty Events API routing key.
+    request:
+      method: POST
+      url: https://events.pagerduty.com/v2/enqueue
+      headers:
+        Accept: application/json
+      body:
+        event_action: acknowledge
+        dedup_key: "${args.incident_key}"
+        routing_key: "${args.service_key}"
+  resolve_event:
+    description: Resolve an existing event in PagerDuty.
+    args:
+      incident_key:
+        type: string
+        required: true
+        description: Identifies the alert.
+      service_key:
+        type: string
+        required: true
+        description: PagerDuty Events API routing key.
+    request:
+      method: POST
+      url: https://events.pagerduty.com/v2/enqueue
+      headers:
+        Accept: application/json
+      body:
+        event_action: resolve
+        dedup_key: "${args.incident_key}"
+        routing_key: "${args.service_key}"

@@ -1,0 +1,71 @@
+provider: gophish
+name: GoPhish
+description: Phishing campaign management using GoPhish.
+http_header:
+  Authorization: "Bearer ${env.GOPHISH_API_KEY}"
+functions:
+  list_campaigns:
+    description: List campaigns from GoPhish.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/campaigns/"
+  get_campaign:
+    description: Get a campaign from GoPhish.
+    args:
+      campaign_id:
+        type: number
+        required: true
+        description: The ID of the campaign to get.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/campaigns/${args.campaign_id}"
+  get_campaign_results:
+    description: Get campaign results from GoPhish.
+    args:
+      campaign_id:
+        type: number
+        required: true
+        description: The ID of the campaign to get results for.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/campaigns/${args.campaign_id}/results"
+  get_campaign_summary:
+    description: Get campaign summary from GoPhish.
+    args:
+      campaign_id:
+        type: number
+        required: true
+        description: The ID of the campaign to get summary for.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/campaigns/${args.campaign_id}/summary"
+  list_groups:
+    description: List groups from GoPhish.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/groups/"
+  get_group:
+    description: Get a group from GoPhish.
+    args:
+      group_id:
+        type: number
+        required: true
+        description: The ID of the group to get.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/groups/${args.group_id}"
+  list_templates:
+    description: List templates from GoPhish.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/templates/"
+  list_landing_pages:
+    description: List landing pages from GoPhish.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/pages/"
+  list_sending_profiles:
+    description: List sending profiles from GoPhish.
+    request:
+      method: GET
+      url: "${env.GOPHISH_BASE_URL}/api/smtp/"

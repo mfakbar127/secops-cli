@@ -1,6 +1,8 @@
 # secops-cli
 
-Run configurable SecOps HTTP tool actions from simple YAML files.
+Unified SecOps tool calls from the CLI.
+
+`secops-cli` provides a YAML-configurable way to call security and operations tools such as VirusTotal, CrowdStrike, AbuseIPDB, urlscan.io, IPinfo, URLhaus, and more from a single command-line interface.
 
 ## Usage
 
@@ -16,7 +18,7 @@ npx secops-cli urlhaus lookup_url --url https://example.com
 Use a custom directory with `--config-path`:
 
 ```bash
-npx secops-cli abuseipdb check_ip --ip 1.2.3.4 --config-path ./my-secops-tools
+npx secops-cli abuseipdb lookup_ip_address --ip_address 1.2.3.4 --config-path ./my-secops-tools
 ```
 
 ## Tool YAML schema
@@ -25,6 +27,8 @@ npx secops-cli abuseipdb check_ip --ip 1.2.3.4 --config-path ./my-secops-tools
 provider: urlhaus
 name: URLhaus
 description: Public URL malware intelligence lookups.
+http_header:
+  Content-Type: application/x-www-form-urlencoded
 functions:
   lookup_url:
     description: Look up a URL in URLhaus.
@@ -36,13 +40,21 @@ functions:
     request:
       method: POST
       url: https://urlhaus-api.abuse.ch/v1/url/
-      headers:
-        Content-Type: application/x-www-form-urlencoded
       body:
         url: "${args.url}"
 ```
 
+Use root-level `http_header` for headers shared by all functions in the provider. If the same header is also set in a function's `request.headers`, the root-level `http_header` value takes precedence.
+
 Supported argument types are `string`, `number`, and `boolean`.
+
+Supported root tool fields include:
+
+- `provider`
+- `name`
+- `description`
+- `http_header`
+- `functions`
 
 Supported request fields are:
 

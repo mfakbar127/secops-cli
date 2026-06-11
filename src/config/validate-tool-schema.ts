@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { HttpMethod, ToolDefinition } from "../types.js";
+import type { HttpMethod, TemplateValue, ToolDefinition } from "../types.js";
 import { CliError } from "../utils/errors.js";
 
 const templateValueSchema: z.ZodType = z.lazy(() =>
@@ -53,6 +53,7 @@ const toolSchema = z
       ),
     name: z.string().optional(),
     description: z.string().optional(),
+    http_header: z.record(templateValueSchema).optional(),
     functions: z
       .record(functionSchema)
       .refine((functions) => Object.keys(functions).length > 0, {
@@ -84,6 +85,10 @@ export function validateToolSchema(
           request: {
             ...toolFunction.request,
             method: toolFunction.request.method as HttpMethod,
+            headers: mergeHeaders(
+              toolFunction.request.headers,
+              result.data.http_header,
+            ),
           },
         },
       ]),
@@ -99,5 +104,23 @@ export function validateToolSchema(
     tool.description = result.data.description;
   }
 
+  if (result.data.http_header !== undefined) {
+    tool.http_header = result.data.http_header;
+  }
+
   return tool;
+}
+
+function mergeHeaders(
+  requestHeaders: Record<string, TemplateValue> | undefined,
+  toolHeaders: Record<string, TemplateValue> | undefined,
+): Record<string, TemplateValue> | undefined {
+  if (requestHeaders === undefined && toolHeaders === undefined) {
+    return undefined;
+  }
+
+  return {
+    ...(requestHeaders ?? {}),
+    ...(toolHeaders ?? {}),
+  };
 }

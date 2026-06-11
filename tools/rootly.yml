@@ -1,0 +1,125 @@
+provider: rootly
+name: Rootly
+description: Rootly alert and incident lookups.
+http_header:
+  Authorization: "Bearer ${env.ROOTLY_API_KEY}"
+functions:
+  get_alert:
+    description: Retrieves a specific alert by ID.
+    args:
+      alert_id:
+        type: string
+        required: true
+        description: The ID of the alert.
+      include:
+        type: string
+        required: false
+        default: ""
+        description: Include additional data, comma separated if needed.
+    request:
+      method: GET
+      url: "https://api.rootly.com/v1/alerts/${args.alert_id}"
+      query:
+        include: "${args.include}"
+  get_incident:
+    description: Retrieves a specific incident by ID.
+    args:
+      incident_id:
+        type: string
+        required: true
+        description: The ID of the incident.
+      include:
+        type: string
+        required: false
+        default: ""
+        description: Include additional data, comma separated if needed.
+    request:
+      method: GET
+      url: "https://api.rootly.com/v1/incidents/${args.incident_id}"
+      query:
+        include: "${args.include}"
+  list_alerts:
+    description: List alerts.
+    args:
+      include:
+        type: string
+        required: false
+        default: ""
+        description: Include additional data, comma separated if needed.
+      status:
+        type: string
+        required: false
+        default: ""
+        description: Filter by status.
+      page_size:
+        type: number
+        required: false
+        default: 25
+        description: Page size.
+      page_number:
+        type: number
+        required: false
+        default: 1
+        description: Page number.
+    request:
+      method: GET
+      url: https://api.rootly.com/v1/alerts
+      query:
+        include: "${args.include}"
+        filter[status]: "${args.status}"
+        page[size]: "${args.page_size}"
+        page[number]: "${args.page_number}"
+  list_incident_alerts:
+    description: List incident alerts.
+    args:
+      incident_id:
+        type: string
+        required: true
+        description: The ID of the incident.
+      include:
+        type: string
+        required: false
+        default: ""
+        description: Include additional data, comma separated if needed.
+    request:
+      method: GET
+      url: "https://api.rootly.com/v1/incidents/${args.incident_id}/alerts"
+      query:
+        include: "${args.include}"
+  list_incidents:
+    description: List incidents.
+    args:
+      include:
+        type: string
+        required: false
+        default: ""
+        description: Include additional data, comma separated if needed.
+      status:
+        type: string
+        required: false
+        default: ""
+        description: Filter by status.
+      severity:
+        type: string
+        required: false
+        default: ""
+        description: Filter by severity.
+      page_size:
+        type: number
+        required: false
+        default: 25
+        description: Page size.
+      page_number:
+        type: number
+        required: false
+        default: 1
+        description: Page number.
+    request:
+      method: GET
+      url: https://api.rootly.com/v1/incidents
+      query:
+        include: "${args.include}"
+        filter[status]: "${args.status}"
+        filter[severity]: "${args.severity}"
+        page[size]: "${args.page_size}"
+        page[number]: "${args.page_number}"

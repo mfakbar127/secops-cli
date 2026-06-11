@@ -1,0 +1,81 @@
+provider: hibp
+name: Have I Been Pwned
+description: Breach and paste lookups using Have I Been Pwned.
+http_header:
+  User-Agent: secops-cli-hibp-integration
+functions:
+  check_email_breaches:
+    description: Check if an email address has been compromised in known data breaches.
+    args:
+      email:
+        type: string
+        required: true
+        description: Email address to check for breaches.
+      truncate_response:
+        type: boolean
+        required: false
+        default: true
+        description: Return only breach names or full breach details.
+      include_unverified:
+        type: boolean
+        required: false
+        default: true
+        description: Include unverified breaches in results.
+      domain_filter:
+        type: string
+        required: false
+        default: ""
+        description: Filter results to only breaches from this domain.
+    request:
+      method: GET
+      url: "https://haveibeenpwned.com/api/v3/breachedaccount/${args.email}"
+      headers:
+        hibp-api-key: "${env.HIBP_API_KEY}"
+      query:
+        truncateResponse: "${args.truncate_response}"
+        includeUnverified: "${args.include_unverified}"
+        domain: "${args.domain_filter}"
+  check_email_pastes:
+    description: Check if an email address has been found in any pastes.
+    args:
+      email:
+        type: string
+        required: true
+        description: Email address to check for pastes.
+    request:
+      method: GET
+      url: "https://haveibeenpwned.com/api/v3/pasteaccount/${args.email}"
+      headers:
+        hibp-api-key: "${env.HIBP_API_KEY}"
+  get_all_breaches:
+    description: Get a list of all data breaches in the system.
+    args:
+      domain_filter:
+        type: string
+        required: false
+        description: Filter breaches to only those affecting this domain.
+    request:
+      method: GET
+      url: https://haveibeenpwned.com/api/v3/breaches
+      query:
+        domain: "${args.domain_filter}"
+  get_breach_details:
+    description: Get detailed information about a specific data breach.
+    args:
+      breach_name:
+        type: string
+        required: true
+        description: Name of the breach to get details for.
+    request:
+      method: GET
+      url: "https://haveibeenpwned.com/api/v3/breach/${args.breach_name}"
+  get_data_classes:
+    description: Get all data classes in the system.
+    request:
+      method: GET
+      url: https://haveibeenpwned.com/api/v3/dataclasses
+  get_latest_breach:
+    description: Get the most recently added breach in the system.
+    request:
+      method: GET
+      url: https://haveibeenpwned.com/api/v3/latestbreach

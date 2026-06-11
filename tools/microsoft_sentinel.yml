@@ -1,0 +1,178 @@
+provider: microsoft_sentinel
+name: Microsoft Sentinel
+description: Microsoft Sentinel workspace queries using Azure Management API.
+http_header:
+  Authorization: "Bearer ${env.MICROSOFT_SENTINEL_TOKEN}"
+functions:
+  list_alert_rule_templates:
+    description: Get all alert rule templates available in Microsoft Sentinel workspace.
+    args:
+      subscription_id:
+        type: string
+        required: true
+        description: Azure subscription ID.
+      resource_group_name:
+        type: string
+        required: true
+        description: Azure resource group name.
+      workspace_name:
+        type: string
+        required: true
+        description: Log Analytics workspace name.
+      api_version:
+        type: string
+        required: false
+        default: 2025-09-01
+        description: API version.
+    request:
+      method: GET
+      url: "${env.AZURE_MANAGEMENT_BASE_URL}/subscriptions/${args.subscription_id}/resourceGroups/${args.resource_group_name}/providers/Microsoft.OperationalInsights/workspaces/${args.workspace_name}/providers/Microsoft.SecurityInsights/alertRuleTemplates"
+      query:
+        api-version: "${args.api_version}"
+  list_alert_rules:
+    description: Get all alert rules in Microsoft Sentinel workspace.
+    args:
+      subscription_id:
+        type: string
+        required: true
+        description: Azure subscription ID.
+      resource_group_name:
+        type: string
+        required: true
+        description: Azure resource group name.
+      workspace_name:
+        type: string
+        required: true
+        description: Log Analytics workspace name.
+      api_version:
+        type: string
+        required: false
+        default: 2025-09-01
+        description: API version.
+    request:
+      method: GET
+      url: "${env.AZURE_MANAGEMENT_BASE_URL}/subscriptions/${args.subscription_id}/resourceGroups/${args.resource_group_name}/providers/Microsoft.OperationalInsights/workspaces/${args.workspace_name}/providers/Microsoft.SecurityInsights/alertRules"
+      query:
+        api-version: "${args.api_version}"
+  list_bookmarks:
+    description: Get all bookmarks in Microsoft Sentinel workspace.
+    args:
+      subscription_id:
+        type: string
+        required: true
+        description: Azure subscription ID.
+      resource_group_name:
+        type: string
+        required: true
+        description: Azure resource group name.
+      workspace_name:
+        type: string
+        required: true
+        description: Log Analytics workspace name.
+      api_version:
+        type: string
+        required: false
+        default: 2025-09-01
+        description: API version.
+    request:
+      method: GET
+      url: "${env.AZURE_MANAGEMENT_BASE_URL}/subscriptions/${args.subscription_id}/resourceGroups/${args.resource_group_name}/providers/Microsoft.OperationalInsights/workspaces/${args.workspace_name}/providers/Microsoft.SecurityInsights/bookmarks"
+      query:
+        api-version: "${args.api_version}"
+  get_incident:
+    description: Get a specific incident by ID from Microsoft Sentinel workspace.
+    args:
+      subscription_id:
+        type: string
+        required: true
+        description: Azure subscription ID.
+      resource_group_name:
+        type: string
+        required: true
+        description: Azure resource group name.
+      workspace_name:
+        type: string
+        required: true
+        description: Log Analytics workspace name.
+      incident_id:
+        type: string
+        required: true
+        description: Incident ID.
+      api_version:
+        type: string
+        required: false
+        default: 2025-09-01
+        description: API version.
+    request:
+      method: GET
+      url: "${env.AZURE_MANAGEMENT_BASE_URL}/subscriptions/${args.subscription_id}/resourceGroups/${args.resource_group_name}/providers/Microsoft.OperationalInsights/workspaces/${args.workspace_name}/providers/Microsoft.SecurityInsights/incidents/${args.incident_id}"
+      query:
+        api-version: "${args.api_version}"
+  list_incidents:
+    description: Get all incidents in Microsoft Sentinel workspace.
+    args:
+      subscription_id:
+        type: string
+        required: true
+        description: Azure subscription ID.
+      resource_group_name:
+        type: string
+        required: true
+        description: Azure resource group name.
+      workspace_name:
+        type: string
+        required: true
+        description: Log Analytics workspace name.
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: OData filter expression.
+      orderby:
+        type: string
+        required: false
+        default: ""
+        description: OData orderby expression.
+      top:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of incidents to return.
+      api_version:
+        type: string
+        required: false
+        default: 2025-09-01
+        description: API version.
+    request:
+      method: GET
+      url: "${env.AZURE_MANAGEMENT_BASE_URL}/subscriptions/${args.subscription_id}/resourceGroups/${args.resource_group_name}/providers/Microsoft.OperationalInsights/workspaces/${args.workspace_name}/providers/Microsoft.SecurityInsights/incidents"
+      query:
+        "$filter": "${args.filter}"
+        "$orderby": "${args.orderby}"
+        "$top": "${args.top}"
+        api-version: "${args.api_version}"
+  list_watchlists:
+    description: Get all watchlists in Microsoft Sentinel workspace.
+    args:
+      subscription_id:
+        type: string
+        required: true
+        description: Azure subscription ID.
+      resource_group_name:
+        type: string
+        required: true
+        description: Azure resource group name.
+      workspace_name:
+        type: string
+        required: true
+        description: Log Analytics workspace name.
+      api_version:
+        type: string
+        required: false
+        default: 2025-09-01
+        description: API version.
+    request:
+      method: GET
+      url: "${env.AZURE_MANAGEMENT_BASE_URL}/subscriptions/${args.subscription_id}/resourceGroups/${args.resource_group_name}/providers/Microsoft.OperationalInsights/workspaces/${args.workspace_name}/providers/Microsoft.SecurityInsights/watchlists"
+      query:
+        api-version: "${args.api_version}"

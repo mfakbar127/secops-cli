@@ -1,0 +1,46 @@
+provider: hackerone
+name: HackerOne
+description: HackerOne program and report lookups.
+http_header:
+  Authorization: "Basic ${env.HACKERONE_BASIC_AUTH}"
+  Accept: application/json
+functions:
+  get_program:
+    description: Get details of a specific program from HackerOne.
+    args:
+      program_id:
+        type: number
+        required: true
+        description: The ID of the program to retrieve.
+    request:
+      method: GET
+      url: "https://api.hackerone.com/v1/programs/${args.program_id}/"
+  get_programs:
+    description: Get a paginated list of programs from HackerOne.
+    args:
+      page_number:
+        type: number
+        required: false
+        default: 1
+        description: The page number to retrieve.
+      page_size:
+        type: number
+        required: false
+        default: 25
+        description: Number of programs per page.
+    request:
+      method: GET
+      url: https://api.hackerone.com/v1/me/programs/
+      query:
+        page[number]: "${args.page_number}"
+        page[size]: "${args.page_size}"
+  get_report:
+    description: Get details of a specific report from HackerOne.
+    args:
+      report_id:
+        type: number
+        required: true
+        description: The ID of the report to retrieve.
+    request:
+      method: GET
+      url: "https://api.hackerone.com/v1/reports/${args.report_id}"

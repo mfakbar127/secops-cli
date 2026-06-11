@@ -1,0 +1,97 @@
+provider: microsoft_teams
+name: Microsoft Teams
+description: Microsoft Teams channel message operations using Microsoft Graph.
+http_header:
+  Authorization: "Bearer ${env.MICROSOFT_TEAMS_TOKEN}"
+functions:
+  list_channel_messages:
+    description: Retrieve messages in a Teams channel.
+    args:
+      team_id:
+        type: string
+        required: true
+        description: The ID of the team.
+      channel_id:
+        type: string
+        required: true
+        description: The ID of the channel.
+      top:
+        type: number
+        required: false
+        default: 20
+        description: Number of messages to return per page.
+    request:
+      method: GET
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/beta/teams/${args.team_id}/channels/${args.channel_id}/messages"
+      query:
+        "$top": "${args.top}"
+  send_message:
+    description: Send a message to a Microsoft Teams channel.
+    args:
+      team_id:
+        type: string
+        required: true
+        description: The ID of the team.
+      channel_id:
+        type: string
+        required: true
+        description: The ID of the channel.
+      message:
+        type: string
+        required: true
+        description: The message to send.
+    request:
+      method: POST
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/v1.0/teams/${args.team_id}/channels/${args.channel_id}/messages"
+      headers:
+        Content-Type: application/json
+      body:
+        body:
+          content: "${args.message}"
+  post_replies:
+    description: Send a reply to a Microsoft Teams message.
+    args:
+      team_id:
+        type: string
+        required: true
+        description: The ID of the team.
+      channel_id:
+        type: string
+        required: true
+        description: The ID of the channel.
+      message_id:
+        type: string
+        required: true
+        description: The ID of the message to reply to.
+      message:
+        type: string
+        required: true
+        description: The reply message to send.
+      contentType:
+        type: string
+        required: false
+        default: html
+        description: The content type of the reply message.
+    request:
+      method: POST
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/v1.0/teams/${args.team_id}/channels/${args.channel_id}/messages/${args.message_id}/replies"
+      headers:
+        Content-Type: application/json
+      body:
+        body:
+          content: "${args.message}"
+          contentType: "${args.contentType}"
+  delete_channel:
+    description: Delete a channel from a Microsoft Teams team.
+    args:
+      team_id:
+        type: string
+        required: true
+        description: The ID of the team.
+      channel_id:
+        type: string
+        required: true
+        description: The ID of the channel.
+    request:
+      method: DELETE
+      url: "${env.MICROSOFT_GRAPH_BASE_URL}/beta/teams/${args.team_id}/channels/${args.channel_id}"
