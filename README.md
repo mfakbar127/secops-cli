@@ -1,3 +1,5 @@
+<img width="1200" height="630" alt="secops-cli" src="https://github.com/user-attachments/assets/5a2709f1-1312-4749-9edd-ba0cdc9088e4" />
+
 # secops-cli
 
 Unified SecOps tool calls from the CLI.
