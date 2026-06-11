@@ -1,0 +1,167 @@
+provider: alertmedia
+name: AlertMedia
+description: AlertMedia travel, user, and event operations.
+http_header:
+  Authorization: "Bearer ${env.ALERTMEDIA_API_KEY}"
+functions:
+  create_trip:
+    description: Create a trip in AlertMedia.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID of the user to create the trip for.
+      name:
+        type: string
+        required: true
+        description: Name of the trip.
+      start_date:
+        type: string
+        required: true
+        description: Start date of the trip.
+      start_time_zone:
+        type: string
+        required: false
+        default: America/New_York
+        description: Time zone of the trip.
+      end_date:
+        type: string
+        required: true
+        description: End date of the trip.
+      end_time_zone:
+        type: string
+        required: false
+        default: America/New_York
+        description: Time zone of the trip.
+      city:
+        type: string
+        required: true
+        description: City of the trip.
+      country_code:
+        type: string
+        required: true
+        description: Country code of the trip.
+      latitude:
+        type: string
+        required: true
+        description: Latitude of the trip.
+      longitude:
+        type: string
+        required: true
+        description: Longitude of the trip.
+    request:
+      method: POST
+      url: "${env.ALERTMEDIA_BASE_URL}/api/users/${args.user_id}/trips"
+      body:
+        user: "${args.user_id}"
+        name: "${args.name}"
+        start_date: "${args.start_date}"
+        start_time_zone: "${args.start_time_zone}"
+        end_date: "${args.end_date}"
+        end_time_zone: "${args.end_time_zone}"
+        destination_address:
+          city: "${args.city}"
+          country: "${args.country_code}"
+          latitude: "${args.latitude}"
+          longitude: "${args.longitude}"
+  delete_trip:
+    description: Delete a trip from AlertMedia.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID of the user to delete the trip for.
+      trip_id:
+        type: string
+        required: true
+        description: ID of the trip to delete.
+    request:
+      method: DELETE
+      url: "${env.ALERTMEDIA_BASE_URL}/api/users/${args.user_id}/trips/${args.trip_id}"
+  get_travel_events:
+    description: Get travel events and concerns for users traveling.
+    args:
+      since:
+        type: string
+        required: false
+        default: ""
+        description: Start date of the trips to get.
+      active:
+        type: boolean
+        required: false
+        default: true
+        description: Whether to get active trips.
+    request:
+      method: GET
+      url: "${env.ALERTMEDIA_BASE_URL}/api/v2/events"
+      query:
+        since: "${args.since}"
+        active: "${args.active}"
+  get_user_trip_by_id:
+    description: Get a trip by ID from AlertMedia.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID of the user to get the trip for.
+      trip_id:
+        type: string
+        required: true
+        description: ID of the trip to get.
+    request:
+      method: GET
+      url: "${env.ALERTMEDIA_BASE_URL}/api/users/${args.user_id}/trips/${args.trip_id}"
+  get_user_trips:
+    description: Get a list of trips for a user from AlertMedia.
+    args:
+      user_id:
+        type: string
+        required: true
+        description: User ID of the user to get trips for.
+    request:
+      method: GET
+      url: "${env.ALERTMEDIA_BASE_URL}/api/users/${args.user_id}/trips"
+  search_trips:
+    description: Search for trips in AlertMedia.
+    args:
+      ordering:
+        type: string
+        required: false
+        default: -active_date
+        description: Sort trips in response.
+      status:
+        type: string
+        required: false
+        default: upcoming,active,past
+        description: Filter trips by status.
+    request:
+      method: GET
+      url: "${env.ALERTMEDIA_BASE_URL}/api/trips"
+      query:
+        ordering: "${args.ordering}"
+        status: "${args.status}"
+  search_users:
+    description: Search for users in AlertMedia.
+    args:
+      email:
+        type: string
+        required: false
+        default: ""
+        description: Email of the user to search for.
+      name:
+        type: string
+        required: false
+        default: ""
+        description: Name of the user to search for.
+      phone:
+        type: string
+        required: false
+        default: ""
+        description: Phone number of the user to search for.
+    request:
+      method: GET
+      url: "${env.ALERTMEDIA_BASE_URL}/api/users"
+      query:
+        email: "${args.email}"
+        name: "${args.name}"
+        phone: "${args.phone}"

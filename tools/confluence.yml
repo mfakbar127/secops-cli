@@ -1,0 +1,145 @@
+provider: confluence
+name: Confluence
+description: Confluence page, label, comment, and search operations.
+http_header:
+  Authorization: "Basic ${env.CONFLUENCE_BASIC_AUTH}"
+functions:
+  add_page_label:
+    description: Add a label to a Confluence page.
+    args:
+      page_id:
+        type: string
+        required: true
+        description: The ID of the page to label.
+      name:
+        type: string
+        required: true
+        description: Label name to apply.
+      prefix:
+        type: string
+        required: false
+        default: global
+        description: Label prefix.
+    request:
+      method: POST
+      url: "${env.CONFLUENCE_BASE_URL}/rest/api/content/${args.page_id}/label"
+      headers:
+        Content-Type: application/json
+      body:
+        - prefix: "${args.prefix}"
+          name: "${args.name}"
+  delete_page:
+    description: Delete a Confluence page by ID.
+    args:
+      page_id:
+        type: string
+        required: true
+        description: The ID of the page to delete.
+    request:
+      method: DELETE
+      url: "${env.CONFLUENCE_BASE_URL}/rest/api/content/${args.page_id}"
+  get_page:
+    description: Retrieve a Confluence page by its numeric ID with optional expanded fields.
+    args:
+      page_id:
+        type: string
+        required: true
+        description: Confluence page ID.
+      expand:
+        type: string
+        required: false
+        default: body.storage,version,space
+        description: Comma-separated fields to expand.
+    request:
+      method: GET
+      url: "${env.CONFLUENCE_BASE_URL}/rest/api/content/${args.page_id}"
+      query:
+        expand: "${args.expand}"
+  get_page_by_title:
+    description: Find a Confluence page by title within a space.
+    args:
+      space_key:
+        type: string
+        required: true
+        description: Space key containing the page.
+      title:
+        type: string
+        required: true
+        description: Exact page title to retrieve.
+      expand:
+        type: string
+        required: false
+        default: body.storage,version,space
+        description: Comma-separated fields to expand.
+    request:
+      method: GET
+      url: "${env.CONFLUENCE_BASE_URL}/rest/api/content"
+      query:
+        title: "${args.title}"
+        spaceKey: "${args.space_key}"
+        type: page
+        expand: "${args.expand}"
+        limit: 1
+  get_page_comments:
+    description: Retrieve comments for a Confluence page with pagination support.
+    args:
+      page_id:
+        type: string
+        required: true
+        description: Confluence page ID to fetch comments for.
+      depth:
+        type: string
+        required: false
+        default: all
+        description: Depth of comments to return.
+      expand:
+        type: string
+        required: false
+        default: body.view,version
+        description: Fields to expand on each comment.
+      limit:
+        type: number
+        required: false
+        default: 25
+        description: Maximum number of comments to return per request.
+      start:
+        type: number
+        required: false
+        default: 0
+        description: Starting index for pagination.
+    request:
+      method: GET
+      url: "${env.CONFLUENCE_BASE_URL}/rest/api/content/${args.page_id}/child/comment"
+      query:
+        expand: "${args.expand}"
+        depth: "${args.depth}"
+        limit: "${args.limit}"
+        start: "${args.start}"
+  get_page_labels:
+    description: List labels applied to a Confluence page.
+    args:
+      page_id:
+        type: string
+        required: true
+        description: The ID of the page to fetch labels for.
+    request:
+      method: GET
+      url: "${env.CONFLUENCE_BASE_URL}/rest/api/content/${args.page_id}/label"
+  search_content:
+    description: Search Confluence content with Confluence Query Language.
+    args:
+      query:
+        type: string
+        required: true
+        description: Search query in CQL.
+      limit:
+        type: number
+        required: false
+        default: 10
+        description: Maximum number of results to return.
+    request:
+      method: GET
+      url: "${env.CONFLUENCE_BASE_URL}/rest/api/search"
+      query:
+        cql: "${args.query}"
+        limit: "${args.limit}"

@@ -1,0 +1,141 @@
+provider: caldera
+name: Caldera
+description: MITRE Caldera API operations.
+http_header:
+  KEY: "${env.CALDERA_API_KEY}"
+  Content-Type: application/json
+functions:
+  health_check:
+    description: Query the Caldera REST API health endpoint.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/health"
+  list_abilities:
+    description: List all Caldera abilities.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/abilities"
+  get_ability:
+    description: Retrieve a Caldera ability by ID.
+    args:
+      ability_id:
+        type: string
+        required: true
+        description: Ability ID to fetch.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/abilities/${args.ability_id}"
+  list_adversaries:
+    description: List Caldera adversaries.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/adversaries"
+  get_adversary:
+    description: Retrieve a Caldera adversary by ID.
+    args:
+      adversary_id:
+        type: string
+        required: true
+        description: Adversary ID to fetch.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/adversaries/${args.adversary_id}"
+  list_agents:
+    description: List all Caldera agents.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/agents"
+  get_agent:
+    description: Retrieve a Caldera agent by PAW.
+    args:
+      paw:
+        type: string
+        required: true
+        description: Agent PAW identifier.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/agents/${args.paw}"
+  list_operations:
+    description: List all Caldera operations.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/operations"
+  get_operation:
+    description: Retrieve a Caldera operation by ID.
+    args:
+      operation_id:
+        type: string
+        required: true
+        description: Operation ID to fetch.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/operations/${args.operation_id}"
+  list_operation_links:
+    description: List links for a specific Caldera operation.
+    args:
+      operation_id:
+        type: string
+        required: true
+        description: Operation ID to inspect.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/operations/${args.operation_id}/links"
+  get_operation_link:
+    description: Retrieve a specific link from a Caldera operation.
+    args:
+      operation_id:
+        type: string
+        required: true
+        description: Operation ID that contains the link.
+      link_id:
+        type: string
+        required: true
+        description: Link ID to fetch.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/operations/${args.operation_id}/links/${args.link_id}"
+  get_operation_link_result:
+    description: Retrieve the result payload for a specific Caldera link.
+    args:
+      operation_id:
+        type: string
+        required: true
+        description: Operation ID that contains the link.
+      link_id:
+        type: string
+        required: true
+        description: Link ID to fetch.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/operations/${args.operation_id}/links/${args.link_id}/result"
+  list_payloads:
+    description: List uploaded payloads from Caldera.
+    request:
+      method: GET
+      url: "${env.CALDERA_BASE_URL}/payloads"
+  add_operation_link:
+    description: Queue an ability on an existing Caldera operation.
+    args:
+      operation_id:
+        type: string
+        required: true
+        description: Operation ID to update.
+      ability_id:
+        type: string
+        required: true
+        description: Ability ID to add to the operation.
+      ability_executor:
+        type: string
+        required: true
+        description: Executor name to run the ability with.
+      paw:
+        type: string
+        required: true
+        description: Agent PAW that should run the ability.
+    request:
+      method: POST
+      url: "${env.CALDERA_BASE_URL}/operations/${args.operation_id}/links"
+      body:
+        ability_id: "${args.ability_id}"
+        ability_executor: "${args.ability_executor}"
+        paw: "${args.paw}"
