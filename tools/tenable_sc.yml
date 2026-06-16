@@ -1,0 +1,64 @@
+provider: tenable_sc
+name: Tenable Security Center
+description: Tenable Security Center analysis operations.
+http_header:
+  x-apikey: "accesskey=${env.TENABLE_SC_ACCESS_KEY}; secretkey=${env.TENABLE_SC_SECRET_KEY};"
+  Content-Type: application/json
+functions:
+  run_analysis_query:
+    description: Execute a Tenable Security Center vulnerability analysis query for a scan.
+    args:
+      scan_id:
+        type: number
+        required: true
+        description: ID of the scan whose results the query should evaluate.
+      analysis_type:
+        type: string
+        required: false
+        default: vuln
+        description: Analysis type to pass to the Analysis API.
+      source_type:
+        type: string
+        required: false
+        default: individual
+        description: Result source type, such as individual, cumulative, or lce.
+      sort_field:
+        type: string
+        required: false
+        default: severity
+        description: Field to sort results by.
+      sort_dir:
+        type: string
+        required: false
+        default: desc
+        description: Sort direction for the results.
+      start_offset:
+        type: number
+        required: false
+        default: 0
+        description: Starting offset for pagination.
+      end_offset:
+        type: number
+        required: false
+        default: 100
+        description: Ending offset for pagination.
+      view:
+        type: string
+        required: false
+        default: all
+        description: View applied to the result set.
+    request:
+      method: POST
+      url: "${env.TENABLE_SC_BASE_URL}/rest/analysis"
+      body:
+        type: "${args.analysis_type}"
+        query:
+          tool: vulndetails
+          type: vuln
+        scanID: "${args.scan_id}"
+        sourceType: "${args.source_type}"
+        sortField: "${args.sort_field}"
+        sortDir: "${args.sort_dir}"
+        startOffset: "${args.start_offset}"
+        endOffset: "${args.end_offset}"
+        view: "${args.view}"

@@ -1,0 +1,295 @@
+provider: terraform_cloud
+name: Terraform Cloud
+description: Terraform Cloud run, workspace, project, and variable operations.
+http_header:
+  Authorization: "Bearer ${env.TERRAFORM_API_TOKEN}"
+  Content-Type: application/vnd.api+json
+functions:
+  apply_run:
+    description: Apply a planned Terraform Cloud run.
+    args:
+      run_id:
+        type: string
+        required: true
+        description: The ID of the run to apply.
+      comment:
+        type: string
+        required: false
+        default: ""
+        description: Optional comment explaining why the run is being applied.
+    request:
+      method: POST
+      url: "https://app.terraform.io/api/v2/runs/${args.run_id}/actions/apply"
+      body:
+        comment: "${args.comment}"
+  create_workspace_variable:
+    description: Create a new variable in a Terraform Cloud workspace.
+    args:
+      workspace_id:
+        type: string
+        required: true
+        description: The ID of the workspace to create the variable in.
+      key:
+        type: string
+        required: true
+        description: The name of the variable.
+      value:
+        type: string
+        required: true
+        description: The value of the variable.
+      category:
+        type: string
+        required: false
+        default: terraform
+        description: Whether this is a Terraform variable or environment variable.
+      sensitive:
+        type: boolean
+        required: false
+        default: false
+        description: Whether the value is sensitive and hidden in the UI.
+      hcl:
+        type: boolean
+        required: false
+        default: false
+        description: Whether the value is in HCL format.
+    request:
+      method: POST
+      url: "https://app.terraform.io/api/v2/workspaces/${args.workspace_id}/vars"
+      body:
+        data:
+          type: vars
+          attributes:
+            key: "${args.key}"
+            value: "${args.value}"
+            category: "${args.category}"
+            sensitive: "${args.sensitive}"
+            hcl: "${args.hcl}"
+  get_run_details:
+    description: Get details for a specific Terraform Cloud run.
+    args:
+      run_id:
+        type: string
+        required: true
+        description: The ID of the run to get details for.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/runs/${args.run_id}"
+  get_workspace_details:
+    description: Get details for a workspace by ID.
+    args:
+      workspace_id:
+        type: string
+        required: true
+        description: The workspace ID.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/workspaces/${args.workspace_id}"
+  get_workspace_details_by_name:
+    description: Get details for a workspace by organization and workspace name.
+    args:
+      organization:
+        type: string
+        required: true
+        description: The organization name.
+      workspace_name:
+        type: string
+        required: true
+        description: The workspace name.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/organizations/${args.organization}/workspaces/${args.workspace_name}"
+  list_projects:
+    description: List all projects in a Terraform Cloud organization.
+    args:
+      organization:
+        type: string
+        required: true
+        description: The name of the Terraform Cloud organization.
+      page_size:
+        type: number
+        required: false
+        default: 20
+        description: The number of projects to return per page.
+      page_number:
+        type: number
+        required: false
+        default: 1
+        description: The page number to return.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/organizations/${args.organization}/projects"
+      query:
+        page[size]: "${args.page_size}"
+        page[number]: "${args.page_number}"
+  list_runs:
+    description: List all runs for a Terraform Cloud workspace.
+    args:
+      workspace_id:
+        type: string
+        required: true
+        description: The ID of the workspace to list runs for.
+      page_size:
+        type: number
+        required: false
+        default: 20
+        description: The number of runs to return per page.
+      page_number:
+        type: number
+        required: false
+        default: 1
+        description: The page number to return.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/workspaces/${args.workspace_id}/runs"
+      query:
+        page[size]: "${args.page_size}"
+        page[number]: "${args.page_number}"
+  list_workspace_variables:
+    description: List all variables configured for a Terraform Cloud workspace.
+    args:
+      workspace_id:
+        type: string
+        required: true
+        description: The ID of the workspace to list variables for.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/workspaces/${args.workspace_id}/vars"
+  list_workspaces:
+    description: List all workspaces in a Terraform Cloud organization.
+    args:
+      organization:
+        type: string
+        required: true
+        description: The name of the Terraform Cloud organization.
+      page_size:
+        type: number
+        required: false
+        default: 20
+        description: The number of workspaces to return per page.
+      page_number:
+        type: number
+        required: false
+        default: 1
+        description: The page number to return.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/organizations/${args.organization}/workspaces"
+      query:
+        page[size]: "${args.page_size}"
+        page[number]: "${args.page_number}"
+  list_workspaces_by_project:
+    description: List workspaces in a Terraform Cloud organization filtered by project.
+    args:
+      organization:
+        type: string
+        required: true
+        description: The name of the Terraform Cloud organization.
+      project_id:
+        type: string
+        required: true
+        description: Project ID to filter workspaces by.
+      page_size:
+        type: number
+        required: false
+        default: 20
+        description: The number of workspaces to return per page.
+      page_number:
+        type: number
+        required: false
+        default: 1
+        description: The page number to return.
+    request:
+      method: GET
+      url: "https://app.terraform.io/api/v2/organizations/${args.organization}/projects/${args.project_id}/workspaces"
+      query:
+        page[size]: "${args.page_size}"
+        page[number]: "${args.page_number}"
+  plan_run:
+    description: Create a plan-only run in Terraform Cloud.
+    args:
+      workspace_id:
+        type: string
+        required: true
+        description: The ID of the workspace to create the plan run for.
+      message:
+        type: string
+        required: false
+        default: ""
+        description: Optional message to describe the purpose of the run.
+    request:
+      method: POST
+      url: https://app.terraform.io/api/v2/runs
+      body:
+        data:
+          type: runs
+          attributes:
+            plan-only: true
+            message: "${args.message}"
+          relationships:
+            workspace:
+              data:
+                type: workspaces
+                id: "${args.workspace_id}"
+  refresh_state:
+    description: Create a refresh-only run to update Terraform state.
+    args:
+      workspace_id:
+        type: string
+        required: true
+        description: The ID of the workspace to refresh state for.
+      message:
+        type: string
+        required: false
+        default: ""
+        description: Optional message to describe the purpose of the refresh.
+    request:
+      method: POST
+      url: https://app.terraform.io/api/v2/runs
+      body:
+        data:
+          type: runs
+          attributes:
+            refresh-only: true
+            message: "${args.message}"
+          relationships:
+            workspace:
+              data:
+                type: workspaces
+                id: "${args.workspace_id}"
+  update_workspace_variable:
+    description: Update an existing variable in Terraform Cloud.
+    args:
+      variable_id:
+        type: string
+        required: true
+        description: The ID of the variable to update.
+      key:
+        type: string
+        required: true
+        description: The name of the variable.
+      value:
+        type: string
+        required: true
+        description: The value of the variable.
+      sensitive:
+        type: boolean
+        required: false
+        default: false
+        description: Whether the value is sensitive.
+      hcl:
+        type: boolean
+        required: false
+        default: false
+        description: Whether the value is in HCL format.
+    request:
+      method: PATCH
+      url: "https://app.terraform.io/api/v2/vars/${args.variable_id}"
+      body:
+        data:
+          type: vars
+          id: "${args.variable_id}"
+          attributes:
+            key: "${args.key}"
+            value: "${args.value}"
+            sensitive: "${args.sensitive}"
+            hcl: "${args.hcl}"

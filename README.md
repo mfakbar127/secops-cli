@@ -75,7 +75,11 @@ Lists arguments for `lookup_url`.
 - PagerDuty
 - PhishLabs
 - Rootly
+- SentinelOne
+- Splunk
 - Sublime Security
+- Tenable Security Center
+- Terraform Cloud
 - ThreatStream
 - URLhaus
 - urlscan.io

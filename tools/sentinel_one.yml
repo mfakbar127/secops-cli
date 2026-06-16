@@ -1,0 +1,370 @@
+provider: sentinel_one
+name: SentinelOne
+description: SentinelOne agent, alert, and threat operations.
+http_header:
+  Authorization: "ApiToken ${env.SENTINEL_ONE_API_TOKEN}"
+  Content-Type: application/json
+functions:
+  abort_scan:
+    description: Abort a running scan on a SentinelOne agent.
+    args:
+      device_id:
+        type: string
+        required: true
+        description: ID of the agent/device to abort scan on.
+    request:
+      method: POST
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents/actions/abort-scan"
+      body:
+        filter:
+          ids:
+            - "${args.device_id}"
+  disable_agent:
+    description: Disable a SentinelOne agent.
+    args:
+      agent_id:
+        type: string
+        required: true
+        description: ID of the agent to disable.
+      should_reboot:
+        type: boolean
+        required: false
+        default: false
+        description: Whether the agent should reboot after disabling.
+    request:
+      method: POST
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents/actions/disable-agent"
+      body:
+        filter:
+          ids:
+            - "${args.agent_id}"
+        data:
+          shouldReboot: "${args.should_reboot}"
+  enable_agent:
+    description: Enable a SentinelOne agent.
+    args:
+      agent_id:
+        type: string
+        required: true
+        description: ID of the agent to enable.
+      should_reboot:
+        type: boolean
+        required: false
+        default: false
+        description: Whether the agent should reboot after enabling.
+    request:
+      method: POST
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents/actions/enable-agent"
+      body:
+        filter:
+          ids:
+            - "${args.agent_id}"
+        data:
+          shouldReboot: "${args.should_reboot}"
+  initiate_scan:
+    description: Initiate a scan on a SentinelOne agent.
+    args:
+      device_id:
+        type: string
+        required: true
+        description: ID of the agent/device to scan.
+    request:
+      method: POST
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents/actions/initiate-scan"
+      body:
+        filter:
+          ids:
+            - "${args.device_id}"
+  disconnect_device:
+    description: Disconnect a SentinelOne agent from the network.
+    args:
+      endpoint_id:
+        type: string
+        required: true
+        description: ID of the endpoint/agent to disconnect.
+    request:
+      method: POST
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents/actions/disconnect"
+      body:
+        filter:
+          ids:
+            - "${args.endpoint_id}"
+  connect_to_network:
+    description: Connect a SentinelOne agent to the network.
+    args:
+      endpoint_id:
+        type: string
+        required: true
+        description: ID of the endpoint/agent to connect.
+    request:
+      method: POST
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents/actions/connect"
+      body:
+        filter:
+          ids:
+            - "${args.endpoint_id}"
+  list_agent_ids:
+    description: List SentinelOne agents.
+    args:
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        limit: "${args.limit}"
+  list_alerts:
+    description: Query for SentinelOne alerts.
+    args:
+      start_time:
+        type: string
+        required: false
+        default: ""
+        description: Start time for the query (inclusive).
+      end_time:
+        type: string
+        required: false
+        default: ""
+        description: End time for the query (exclusive).
+      query:
+        type: string
+        required: false
+        default: ""
+        description: SentinelOne search query.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of alerts to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/cloud-detection/alerts"
+      query:
+        created_at__gte: "${args.start_time}"
+        created_at__lt: "${args.end_time}"
+        query: "${args.query}"
+        limit: "${args.limit}"
+  list_threats:
+    description: Query for SentinelOne threats.
+    args:
+      start_time:
+        type: string
+        required: false
+        default: ""
+        description: Start time for the query (inclusive).
+      end_time:
+        type: string
+        required: false
+        default: ""
+        description: End time for the query (exclusive).
+      query:
+        type: string
+        required: false
+        default: ""
+        description: SentinelOne search query.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of threats to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/threats"
+      query:
+        created_at__gte: "${args.start_time}"
+        created_at__lt: "${args.end_time}"
+        query: "${args.query}"
+        limit: "${args.limit}"
+  lookup_agent_account_id:
+    description: Find SentinelOne agents in a specific account.
+    args:
+      account_id:
+        type: string
+        required: true
+        description: Account ID to filter agents by.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        accountIds: "${args.account_id}"
+        limit: "${args.limit}"
+  lookup_agent_email:
+    description: Find SentinelOne agents associated with a user email address.
+    args:
+      email:
+        type: string
+        required: true
+        description: Email address to search for in agent user fields.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        limit: "${args.limit}"
+        lastLoggedInUserName__contains: "${args.email}"
+        adUserName__contains: "${args.email}"
+        query: "${args.email}"
+  lookup_agent_groupid:
+    description: Find SentinelOne agents in a specific group.
+    args:
+      group_id:
+        type: string
+        required: true
+        description: Group ID to filter agents by.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        groupIds: "${args.group_id}"
+        limit: "${args.limit}"
+  lookup_agent_hash:
+    description: Find SentinelOne agents that encountered threats with a file hash.
+    args:
+      file_hash:
+        type: string
+        required: true
+        description: File hash (MD5, SHA1, or SHA256) to search for.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        threatContentHash: "${args.file_hash}"
+        limit: "${args.limit}"
+  lookup_agent_hostname:
+    description: Find SentinelOne agents by hostname/computer name.
+    args:
+      hostname:
+        type: string
+        required: true
+        description: Hostname/computer name to search for.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        computerName__like: "${args.hostname}"
+        limit: "${args.limit}"
+  lookup_agent_ip:
+    description: Find SentinelOne agents by IP address.
+    args:
+      ip_address:
+        type: string
+        required: true
+        description: IP address to search for.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        externalIp__contains: "${args.ip_address}"
+        networkInterfaceInet__contains: "${args.ip_address}"
+        gatewayIp: "${args.ip_address}"
+        limit: "${args.limit}"
+  lookup_agent_mac_address:
+    description: Find SentinelOne agents by MAC address.
+    args:
+      mac_address:
+        type: string
+        required: true
+        description: MAC address to search for.
+      gateway_mac_address:
+        type: string
+        required: false
+        default: ""
+        description: Optional gateway MAC address to search for.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        networkInterfacePhysical__contains: "${args.mac_address}"
+        networkInterfaceGatewayMacAddress__contains: "${args.gateway_mac_address}"
+        limit: "${args.limit}"
+  lookup_agent_machine_type:
+    description: Find SentinelOne agents filtered by machine type.
+    args:
+      machine_types:
+        type: string
+        required: true
+        description: Machine types to include, comma separated if needed.
+      exclude_machine_types:
+        type: string
+        required: false
+        default: ""
+        description: Machine types to exclude, comma separated if needed.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        machineTypes: "${args.machine_types}"
+        machineTypesNin: "${args.exclude_machine_types}"
+        limit: "${args.limit}"
+  lookup_agent_os:
+    description: Find SentinelOne agents filtered by operating system.
+    args:
+      os_types:
+        type: string
+        required: true
+        description: OS types to include, comma separated if needed.
+      os_version_contains:
+        type: string
+        required: false
+        default: ""
+        description: Free-text filter by OS full name and version.
+      os_name:
+        type: string
+        required: false
+        default: ""
+        description: Free-text filter by OS full name.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of agents to return.
+    request:
+      method: GET
+      url: "${env.SENTINEL_ONE_BASE_URL}/web/api/v2.1/agents"
+      query:
+        osTypes: "${args.os_types}"
+        osVersion__contains: "${args.os_version_contains}"
+        query: "${args.os_name}"
+        limit: "${args.limit}"

@@ -1,0 +1,140 @@
+provider: splunk
+name: Splunk
+description: Splunk search job and metadata operations.
+http_header:
+  Authorization: "Bearer ${env.SPLUNK_API_KEY}"
+  Content-Type: application/x-www-form-urlencoded
+functions:
+  discover_fields:
+    description: Discover fields in Splunk data using fieldsummary.
+    args:
+      index:
+        type: string
+        required: false
+        default: "*"
+        description: Index to search for fields.
+      start_time:
+        type: string
+        required: false
+        default: "-24h"
+        description: Start time for the search.
+      end_time:
+        type: string
+        required: false
+        default: now
+        description: End time for the search.
+      max_values:
+        type: number
+        required: false
+        default: 10
+        description: Maximum sample values to return per field.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of fields to return.
+      adhoc_search_level:
+        type: string
+        required: false
+        default: smart
+        description: Adhoc search level.
+    request:
+      method: POST
+      url: "${env.SPLUNK_BASE_URL}/services/search/jobs"
+      body:
+        search: "search index=${args.index} | fieldsummary maxvals=${args.max_values} | sort -count | head ${args.limit}"
+        earliest_time: "${args.start_time}"
+        latest_time: "${args.end_time}"
+        adhoc_search_level: "${args.adhoc_search_level}"
+  list_data_models:
+    description: List all data models on the Splunk server.
+    args:
+      adhoc_search_level:
+        type: string
+        required: false
+        default: smart
+        description: Adhoc search level.
+    request:
+      method: POST
+      url: "${env.SPLUNK_BASE_URL}/services/search/jobs"
+      body:
+        search: "| datamodel"
+        adhoc_search_level: "${args.adhoc_search_level}"
+  list_field_extractions:
+    description: List all configured field extraction rules.
+    args:
+      adhoc_search_level:
+        type: string
+        required: false
+        default: smart
+        description: Adhoc search level.
+    request:
+      method: POST
+      url: "${env.SPLUNK_BASE_URL}/services/search/jobs"
+      body:
+        search: "| rest /servicesNS/-/-/data/props/extractions | table title stanza type value"
+        adhoc_search_level: "${args.adhoc_search_level}"
+  list_indexes:
+    description: List all indexes on the Splunk server.
+    args:
+      adhoc_search_level:
+        type: string
+        required: false
+        default: smart
+        description: Adhoc search level.
+    request:
+      method: POST
+      url: "${env.SPLUNK_BASE_URL}/services/search/jobs"
+      body:
+        search: "| eventcount summarize=false index=* | dedup index | fields index"
+        adhoc_search_level: "${args.adhoc_search_level}"
+  list_sourcetypes:
+    description: List all defined sourcetypes on the Splunk server.
+    args:
+      adhoc_search_level:
+        type: string
+        required: false
+        default: smart
+        description: Adhoc search level.
+    request:
+      method: POST
+      url: "${env.SPLUNK_BASE_URL}/services/search/jobs"
+      body:
+        search: "| metadata type=sourcetypes index=* | fields sourcetype totalCount recentTime"
+        adhoc_search_level: "${args.adhoc_search_level}"
+  search_events:
+    description: Search events from Splunk.
+    args:
+      query:
+        type: string
+        required: true
+        description: Splunk search query. Start with `search`, e.g. `search index=main | head 10`.
+      start_time:
+        type: string
+        required: false
+        default: "-24h"
+        description: Start time for the search.
+      end_time:
+        type: string
+        required: false
+        default: now
+        description: End time for the search.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of events to return.
+      adhoc_search_level:
+        type: string
+        required: false
+        default: smart
+        description: Adhoc search level.
+    request:
+      method: POST
+      url: "${env.SPLUNK_BASE_URL}/services/search/jobs"
+      body:
+        search: "${args.query}"
+        earliest_time: "${args.start_time}"
+        latest_time: "${args.end_time}"
+        adhoc_search_level: "${args.adhoc_search_level}"
+        max_count: "${args.limit}"
