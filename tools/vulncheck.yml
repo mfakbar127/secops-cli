@@ -1,0 +1,45 @@
+provider: vulncheck
+name: VulnCheck
+description: Vulnerability intelligence lookups using VulnCheck.
+http_header:
+  Accept: application/json
+  Authorization: "Bearer ${env.VULNCHECK_API_KEY}"
+functions:
+  kev:
+    description: Look up a CVE in VulnCheck's extended Known Exploited Vulnerabilities catalog, which tracks a broader set of exploited CVEs than CISA's KEV and adds exploit-maturity and ransomware-association context.
+    args:
+      cve:
+        type: string
+        required: true
+        description: CVE ID to look up, e.g. 'CVE-2024-3400'.
+    request:
+      method: GET
+      url: https://api.vulncheck.com/v3/index/vulncheck-kev
+      query:
+        cve: "${args.cve}"
+
+  cpe:
+    description: Find vulnerabilities affecting a specific software version identified by its CPE string.
+    args:
+      cpe:
+        type: string
+        required: true
+        description: CPE string identifying the software and version, e.g. 'cpe:2.3:a:apache:http_server:2.4.49:*:*:*:*:*:*:*'.
+    request:
+      method: GET
+      url: https://api.vulncheck.com/v3/cpe
+      query:
+        cpe: "${args.cpe}"
+
+  purl:
+    description: Find vulnerabilities affecting a specific package version across ecosystems (npm, PyPI, Maven, Go, and more) identified by its package URL.
+    args:
+      purl:
+        type: string
+        required: true
+        description: Package URL identifying the package and version, e.g. 'pkg:npm/lodash@4.17.20'.
+    request:
+      method: GET
+      url: https://api.vulncheck.com/v3/purl
+      query:
+        purl: "${args.purl}"

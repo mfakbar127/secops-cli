@@ -1,0 +1,57 @@
+provider: censys
+name: Censys
+description: Censys host and certificate intelligence lookups. Requires CENSYS_BASIC_AUTH — base64-encode your Censys API ID and secret as "id:secret" and store the result in this env var.
+http_header:
+  Authorization: "Basic ${env.CENSYS_BASIC_AUTH}"
+  Accept: application/json
+functions:
+  search_hosts:
+    description: Search Censys for hosts matching a query, returning IPs, open services, location, ASN, and OS.
+    args:
+      query:
+        type: string
+        required: true
+        description: Censys search syntax query, e.g. services.port:22.
+      per_page:
+        type: number
+        required: false
+        default: 25
+        description: Number of results per page, max 100.
+    request:
+      method: POST
+      url: "https://search.censys.io/api/v2/hosts/search"
+      headers:
+        Content-Type: application/json
+      body:
+        q: "${args.query}"
+        per_page: "${args.per_page}"
+  get_host:
+    description: Get full detail for a single host by IP, including services, certs, location, ASN, OS, and last update time.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IP address of the host to look up.
+    request:
+      method: GET
+      url: "https://search.censys.io/api/v2/hosts/${args.ip}"
+  search_certificates:
+    description: Search Censys for certificates matching a query, returning fingerprint, subject/issuer, validity dates, and SANs.
+    args:
+      query:
+        type: string
+        required: true
+        description: Censys search syntax query, e.g. parsed.names:example.com.
+      per_page:
+        type: number
+        required: false
+        default: 25
+        description: Number of results per page, max 100.
+    request:
+      method: POST
+      url: "https://search.censys.io/api/v2/certificates/search"
+      headers:
+        Content-Type: application/json
+      body:
+        q: "${args.query}"
+        per_page: "${args.per_page}"

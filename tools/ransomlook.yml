@@ -1,0 +1,16 @@
+provider: ransomlook
+name: RansomLook
+description: Tracks ransomware groups and their published leak-site victim posts.
+http_header:
+  Accept: application/json
+functions:
+  list_groups:
+    description: List ransomware groups currently tracked by RansomLook.
+    request:
+      method: GET
+      url: https://www.ransomlook.io/api/groups
+  recent_posts:
+    description: Fetch the most recent victim postings across tracked ransomware leak sites.
+    request:
+      method: GET
+      url: https://www.ransomlook.io/api/recent

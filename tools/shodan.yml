@@ -1,0 +1,76 @@
+provider: shodan
+name: Shodan
+description: Internet-wide device and service intelligence via Shodan. Requires SHODAN_API_KEY.
+functions:
+  host_lookup:
+    description: Look up everything Shodan knows about a single IP - open ports, banners, vulns, org, and location.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to look up.
+    request:
+      method: GET
+      url: "https://api.shodan.io/shodan/host/${args.ip}"
+      query:
+        key: "${env.SHODAN_API_KEY}"
+
+  search:
+    description: Search Shodan's host index using its query syntax.
+    args:
+      query:
+        type: string
+        required: true
+        description: "Shodan search query, e.g. 'apache port:443 country:US'."
+      page:
+        type: number
+        required: false
+        default: 1
+        description: Result page number.
+      facets:
+        type: string
+        required: false
+        default: ""
+        description: Comma-separated facet names to summarize results by, e.g. 'country,org'.
+    request:
+      method: GET
+      url: https://api.shodan.io/shodan/host/search
+      query:
+        key: "${env.SHODAN_API_KEY}"
+        query: "${args.query}"
+        page: "${args.page}"
+        facets: "${args.facets}"
+
+  dns_resolve:
+    description: Resolve one or more hostnames to IP addresses.
+    args:
+      hostnames:
+        type: string
+        required: true
+        description: Comma-separated hostnames to resolve, e.g. 'example.com,test.com'.
+    request:
+      method: GET
+      url: https://api.shodan.io/dns/resolve
+      query:
+        hostnames: "${args.hostnames}"
+        key: "${env.SHODAN_API_KEY}"
+
+  exploit_search:
+    description: Search Shodan's exploit database by keyword or CVE ID.
+    args:
+      query:
+        type: string
+        required: true
+        description: Search text or CVE ID to look up.
+      type:
+        type: string
+        required: false
+        default: ""
+        description: "Restrict results to an exploit type, e.g. 'exploit' or 'metasploit'."
+    request:
+      method: GET
+      url: https://exploits.shodan.io/api/search
+      query:
+        query: "${args.query}"
+        key: "${env.SHODAN_API_KEY}"
+        type: "${args.type}"

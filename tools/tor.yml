@@ -1,0 +1,35 @@
+provider: tor
+name: Tor Network
+description: Onion-service search and Tor exit-node intelligence lookups with no authentication required.
+functions:
+  search_onion:
+    description: Search Ahmia's clear-web index of onion services and return raw HTML results for the caller to parse titles, links, and snippets from.
+    args:
+      query:
+        type: string
+        required: true
+        description: Search term to look up on Ahmia.
+    request:
+      method: GET
+      url: https://ahmia.fi/search/
+      headers:
+        User-Agent: "Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0"
+        Accept: "text/html,application/xhtml+xml,*/*"
+        Accept-Language: "en-US,en;q=0.5"
+      query:
+        q: "${args.query}"
+  exit_nodes:
+    description: Fetch the Tor Project's current bulk list of exit-node IP addresses as plain text, one IP per line.
+    request:
+      method: GET
+      url: https://check.torproject.org/torbulkexitlist
+      headers:
+        User-Agent: secops-cli
+  exit_addresses:
+    description: Fetch the Tor Project's detailed exit-address listing as plain text, including fingerprints, publish timestamps, and exit IPs per node.
+    request:
+      method: GET
+      url: https://check.torproject.org/exit-addresses
+      headers:
+        User-Agent: secops-cli
+</content>

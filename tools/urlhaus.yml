@@ -16,3 +16,27 @@ functions:
       url: https://urlhaus-api.abuse.ch/v1/url/
       body:
         url: "${args.url}"
+  lookup_host:
+    description: Look up a host or IP address in URLhaus.
+    args:
+      host:
+        type: string
+        required: true
+        description: Hostname or IP address to look up.
+    request:
+      method: POST
+      url: https://urlhaus-api.abuse.ch/v1/host/
+      body:
+        host: "${args.host}"
+  search_by_tag:
+    description: Search URLhaus for URLs matching a malware tag.
+    args:
+      tag:
+        type: string
+        required: true
+        description: Malware tag to search for, e.g. Emotet.
+    request:
+      method: POST
+      url: https://urlhaus-api.abuse.ch/v1/tag/
+      body:
+        tag: "${args.tag}"

@@ -1,0 +1,16 @@
+provider: circl_onion_lookup
+name: CIRCL Onion Lookup
+description: Metadata lookups for known Tor onion addresses via CIRCL's Onion Lookup service.
+functions:
+  lookup_onion:
+    description: Retrieve first/last seen dates, status, tags, TLS certificates, open ports, and linked Bitcoin addresses for a known onion address.
+    args:
+      address:
+        type: string
+        required: true
+        description: Bare .onion hostname with any http(s):// prefix and trailing slash removed.
+    request:
+      method: GET
+      url: "https://onion.ail-project.org/api/v1/onion/${args.address}"
+      headers:
+        Accept: application/json

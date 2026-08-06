@@ -1,0 +1,17 @@
+provider: crtsh
+name: crt.sh
+description: Certificate Transparency log search using crt.sh, no authentication required.
+functions:
+  search_domain:
+    description: Search Certificate Transparency logs for certificates issued to a domain, returning issuer, common name, SAN entries, and validity dates.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain name to search for, e.g. example.com.
+    request:
+      method: GET
+      url: "https://crt.sh/"
+      query:
+        q: "%25.${args.domain}"
+        output: json

@@ -1,0 +1,57 @@
+provider: wayback
+name: Wayback Machine
+description: Query the Internet Archive's CDX index for historical URL captures, no authentication required.
+functions:
+  search_urls:
+    description: List archived URLs under a domain, with optional match scope and result filtering.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to search archived captures for, e.g. example.com.
+      match_type:
+        type: string
+        required: false
+        default: ""
+        description: CDX match scope, e.g. exact, prefix, host, or domain.
+      filter:
+        type: string
+        required: false
+        default: ""
+        description: CDX filter expression, e.g. statuscode:200.
+      limit:
+        type: number
+        required: false
+        default: 1000
+        description: Maximum number of captures to return.
+    request:
+      method: GET
+      url: https://web.archive.org/cdx/search/cdx
+      query:
+        url: "*.${args.domain}/*"
+        output: json
+        fl: original,timestamp,statuscode,mimetype
+        collapse: urlkey
+        limit: "${args.limit}"
+        matchType: "${args.match_type}"
+        filter: "${args.filter}"
+  get_snapshots:
+    description: List archive snapshot timestamps recorded for a specific URL.
+    args:
+      url:
+        type: string
+        required: true
+        description: Exact URL to fetch snapshot history for.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of snapshots to return.
+    request:
+      method: GET
+      url: https://web.archive.org/cdx/search/cdx
+      query:
+        url: "${args.url}"
+        output: json
+        fl: timestamp,original,statuscode,mimetype
+        limit: "${args.limit}"

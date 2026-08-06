@@ -1,0 +1,27 @@
+provider: m365
+name: Microsoft 365
+description: Unauthenticated Microsoft 365 tenant and federation discovery lookups.
+functions:
+  tenant_discovery:
+    description: Fetch a domain's Azure AD OpenID configuration, revealing its tenant GUID and auth endpoints.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to discover the Azure AD tenant for, e.g. example.com.
+    request:
+      method: GET
+      url: "https://login.microsoftonline.com/${args.domain}/v2.0/.well-known/openid-configuration"
+  user_realm_check:
+    description: Determine whether a domain's identity is Managed or Federated, and its federation brand/auth URL if federated.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to check the user realm/federation status for.
+    request:
+      method: GET
+      url: https://login.microsoftonline.com/getuserrealm.srf
+      query:
+        login: "test@${args.domain}"
+        json: "1"

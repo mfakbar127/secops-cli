@@ -1,0 +1,62 @@
+provider: vulners
+name: Vulners
+description: Vulnerability and exploit intelligence lookups using Vulners.
+functions:
+  search:
+    description: Search the Vulners database for CVEs, advisories, and exploits matching a Lucene query.
+    args:
+      query:
+        type: string
+        required: true
+        description: Lucene-syntax search query to run against Vulners.
+      limit:
+        type: number
+        required: false
+        default: 20
+        description: Maximum number of results to return.
+      type:
+        type: string
+        required: false
+        default: ""
+        description: Restrict results to a specific document type, e.g. 'exploit', 'cve', or 'advisory'.
+    request:
+      method: POST
+      url: https://vulners.com/api/v3/search/lucene/
+      headers:
+        Content-Type: application/json
+      body:
+        query: "${args.query}"
+        size: "${args.limit}"
+        type: "${args.type}"
+  lookup_id:
+    description: Fetch a single Vulners record by its identifier, such as a CVE, EDB-ID, or GHSA.
+    args:
+      id:
+        type: string
+        required: true
+        description: Identifier of the record to fetch.
+    request:
+      method: GET
+      url: https://vulners.com/api/v3/search/id/
+      query:
+        id: "${args.id}"
+  search_exploits:
+    description: Search Vulners for exploit-only results, restricting matches to ExploitDB entries.
+    args:
+      query:
+        type: string
+        required: true
+        description: Lucene-syntax search query to combine with the exploit-type filter.
+      limit:
+        type: number
+        required: false
+        default: 20
+        description: Maximum number of results to return.
+    request:
+      method: POST
+      url: https://vulners.com/api/v3/search/lucene/
+      headers:
+        Content-Type: application/json
+      body:
+        query: "type:exploitdb AND ${args.query}"
+        size: "${args.limit}"

@@ -1,0 +1,25 @@
+provider: whois
+name: WHOIS
+description: Domain and IP registration lookups via RDAP, no authentication required.
+functions:
+  lookup_domain:
+    description: Look up registration details for a domain, including registrar, status, dates, and nameservers.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain name to look up, e.g. example.com.
+    request:
+      method: GET
+      url: "https://rdap.org/domain/${args.domain}"
+
+  lookup_ip:
+    description: Look up the network allocation for an IP address, including CIDR range, country, and registrant entities.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to look up.
+    request:
+      method: GET
+      url: "https://rdap.org/ip/${args.ip}"

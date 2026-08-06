@@ -1,0 +1,53 @@
+provider: shodan_cvedb
+name: Shodan CVEDB
+description: >-
+  Free, keyless access to Shodan's CVE/vulnerability database (CVEDB) and
+  InternetDB service. This is a separate, no-auth companion to the paid
+  Shodan search API covered in tools/shodan.yml — no SHODAN_API_KEY needed.
+functions:
+  cve_lookup:
+    description: Fetch details for a single CVE, including its CVSS score, EPSS exploit-probability score, whether it's listed in CISA's KEV catalog, affected CPEs, and reference links. Zero-auth call to Shodan's CVEDB.
+    args:
+      cve_id:
+        type: string
+        required: true
+        description: "CVE ID to look up, e.g. 'CVE-2024-3400'."
+    request:
+      method: GET
+      url: "https://cvedb.shodan.io/cve/${args.cve_id}"
+
+  product_lookup:
+    description: List CVEs associated with a given product or vendor name, with optional filtering to only exploited-in-the-wild vulnerabilities.
+    args:
+      product:
+        type: string
+        required: true
+        description: "Product or vendor name to search for, e.g. 'Apache HTTP Server', 'OpenSSL'."
+      count:
+        type: number
+        required: false
+        default: 20
+        description: Maximum number of matching CVEs to return.
+      is_kev:
+        type: boolean
+        required: false
+        default: false
+        description: When true, only return CVEs that also appear in CISA's Known Exploited Vulnerabilities catalog.
+    request:
+      method: GET
+      url: https://cvedb.shodan.io/cves
+      query:
+        product: "${args.product}"
+        count: "${args.count}"
+        is_kev: "${args.is_kev}"
+
+  ip_vulns:
+    description: Look up an IP in Shodan's InternetDB to get its open ports, hostnames, CPEs, known CVE IDs, and tags. InternetDB is a separate free Shodan service from the CVEDB endpoints above, bundled here since both are keyless siblings.
+    args:
+      ip:
+        type: string
+        required: true
+        description: "IPv4 or IPv6 address to look up, e.g. '8.8.8.8'."
+    request:
+      method: GET
+      url: "https://internetdb.shodan.io/${args.ip}"

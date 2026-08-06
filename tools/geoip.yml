@@ -1,0 +1,16 @@
+provider: geoip
+name: GeoIP
+description: IP geolocation and network lookups using ip-api.com's free tier, no authentication required.
+functions:
+  lookup_ip:
+    description: Look up geolocation, ISP, and hosting/proxy flags for an IP address.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to look up.
+    request:
+      method: GET
+      url: "http://ip-api.com/json/${args.ip}"
+      query:
+        fields: status,message,query,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,asname,mobile,proxy,hosting

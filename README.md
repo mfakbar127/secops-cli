@@ -49,41 +49,75 @@ Lists arguments for `lookup_url`.
 
 - AbuseIPDB
 - AlertMedia
+- AlienVault OTX
 - ANY.RUN
+- AttackerKB
+- BGP/ASN
+- Blockchain BTC
 - Caldera
+- Censys
+- CIRCL CVE Search
+- CIRCL Onion Lookup
 - Confluence
 - CrowdSec CTI
+- crt.sh
+- CWE
 - Datadog
 - Elasticsearch
 - EmailRep
+- EPSS
 - Exa
+- GeoIP
+- GHSA
+- GitHub
 - GoPhish
 - Google Maps
 - Google Sheets
+- GreyNoise
 - HackerOne
+- HackerTarget
 - Have I Been Pwned
+- Hudson Rock
 - Hybrid Analysis
+- IntelX
 - IPinfo
 - Jira
 - LeakCheck
+- MalwareBazaar
+- Microsoft 365
 - Microsoft Defender for Endpoint
 - Microsoft Entra
 - Microsoft Sentinel
 - Microsoft Teams
+- NVD
 - Okta
 - Okta OAR
+- OSV
 - PagerDuty
 - PhishLabs
+- PhishTank
+- Pulsedive
+- RansomLook
+- Ransomware.live
 - Rootly
+- SecurityTrails
 - SentinelOne
+- Shodan
+- Shodan CVEDB
 - Splunk
 - Sublime Security
 - Tenable Security Center
 - Terraform Cloud
+- ThreatFox
 - ThreatStream
+- Tor Network
 - URLhaus
 - urlscan.io
 - VirusTotal
+- VulnCheck
+- Vulners
+- Wayback Machine
+- WHOIS/RDAP
 
 </details>
 

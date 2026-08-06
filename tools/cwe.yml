@@ -1,0 +1,27 @@
+provider: cwe
+name: CWE
+description: Look up MITRE Common Weakness Enumeration entries and the annual Top 25 list, no authentication required.
+functions:
+  get:
+    description: Fetch full detail for a single CWE entry, including its name, description, related weaknesses, applicable platforms, likely consequences, detection methods, and mitigations.
+    args:
+      id:
+        type: string
+        required: true
+        description: Numeric CWE ID only, without the 'CWE-' prefix, e.g. '79' for CWE-79.
+    request:
+      method: GET
+      url: "https://cwe-api.mitre.org/api/v1/cwe/${args.id}"
+
+  top25:
+    description: Retrieve the CWE Top 25 Most Dangerous Software Weaknesses list published for a given year.
+    args:
+      year:
+        type: number
+        required: true
+        description: The year to fetch the CWE Top 25 list for, e.g. 2024.
+    request:
+      method: GET
+      url: https://cwe-api.mitre.org/api/v1/cwe/top25
+      query:
+        year: "${args.year}"

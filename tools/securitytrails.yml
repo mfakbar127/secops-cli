@@ -1,0 +1,43 @@
+provider: securitytrails
+name: SecurityTrails
+description: Domain intelligence lookups via SecurityTrails (subdomains, DNS history, WHOIS). Requires SECURITYTRAILS_API_KEY.
+http_header:
+  APIKEY: "${env.SECURITYTRAILS_API_KEY}"
+  Accept: application/json
+functions:
+  list_subdomains:
+    description: Enumerate known subdomain labels for a domain.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Root domain to enumerate subdomains for, e.g. example.com. Results are subdomain labels relative to this domain, not full FQDNs.
+    request:
+      method: GET
+      url: "https://api.securitytrails.com/v1/domain/${args.domain}/subdomains"
+
+  get_dns_history:
+    description: Retrieve historical DNS records of a given type for a domain.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to fetch DNS history for, e.g. example.com.
+      type:
+        type: string
+        required: true
+        description: DNS record type to query. One of a, aaaa, mx, ns, soa, txt (lowercase).
+    request:
+      method: GET
+      url: "https://api.securitytrails.com/v1/history/${args.domain}/dns/${args.type}"
+
+  get_whois:
+    description: Retrieve WHOIS registration data for a domain.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to look up WHOIS records for, e.g. example.com.
+    request:
+      method: GET
+      url: "https://api.securitytrails.com/v1/domain/${args.domain}/whois"

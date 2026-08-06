@@ -1,0 +1,40 @@
+provider: osv
+name: OSV
+description: Open source dependency vulnerability lookups via OSV.dev (Open Source Vulnerabilities, by Google). No API key needed.
+functions:
+  query:
+    description: Check whether a specific package version has known vulnerabilities.
+    args:
+      package_name:
+        type: string
+        required: true
+        description: Name of the package to check, e.g. 'lodash', 'django', 'log4j-core'.
+      version:
+        type: string
+        required: true
+        description: Exact version of the package to check, e.g. '4.17.20'.
+      ecosystem:
+        type: string
+        required: true
+        description: Package ecosystem the name belongs to, e.g. npm, PyPI, Go, Maven, NuGet, Packagist, RubyGems, crates.io, Hex, Pub.
+    request:
+      method: POST
+      url: "https://api.osv.dev/v1/query"
+      headers:
+        Content-Type: application/json
+      body:
+        package:
+          name: "${args.package_name}"
+          ecosystem: "${args.ecosystem}"
+        version: "${args.version}"
+
+  get:
+    description: Fetch full details for a known vulnerability record by its ID.
+    args:
+      id:
+        type: string
+        required: true
+        description: Vulnerability identifier to fetch. Accepts OSV IDs like 'OSV-2021-xxx', GHSA IDs, CVE IDs, or ecosystem-specific IDs like 'PYSEC-xxx'/'RUSTSEC-xxx'.
+    request:
+      method: GET
+      url: "https://api.osv.dev/v1/vulns/${args.id}"

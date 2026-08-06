@@ -1,0 +1,71 @@
+provider: threatfox
+name: ThreatFox
+description: Indicator of compromise lookups against abuse.ch's ThreatFox database.
+http_header:
+  Content-Type: application/json
+functions:
+  get_recent_iocs:
+    description: Fetch indicators of compromise reported to ThreatFox within a recent window.
+    args:
+      days:
+        type: number
+        required: false
+        default: 3
+        description: How many days back to look, between 1 and 30.
+    request:
+      method: POST
+      url: https://threatfox-api.abuse.ch/api/v1/
+      body:
+        query: get_iocs
+        days: "${args.days}"
+  search_ioc:
+    description: Search ThreatFox for a matching indicator such as an IP, domain, URL, or hash.
+    args:
+      search_term:
+        type: string
+        required: true
+        description: Indicator value to search for.
+    request:
+      method: POST
+      url: https://threatfox-api.abuse.ch/api/v1/
+      body:
+        query: search_ioc
+        search_term: "${args.search_term}"
+  lookup_tag:
+    description: Retrieve indicators of compromise tagged with a given label in ThreatFox.
+    args:
+      tag:
+        type: string
+        required: true
+        description: Tag name to look up.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of results to return, between 1 and 1000.
+    request:
+      method: POST
+      url: https://threatfox-api.abuse.ch/api/v1/
+      body:
+        query: taginfo
+        tag: "${args.tag}"
+        limit: "${args.limit}"
+  lookup_malware:
+    description: Retrieve indicators of compromise associated with a given malware family in ThreatFox.
+    args:
+      malware:
+        type: string
+        required: true
+        description: Malware family name in Malpedia format, e.g. "win.emotet".
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of results to return, between 1 and 1000.
+    request:
+      method: POST
+      url: https://threatfox-api.abuse.ch/api/v1/
+      body:
+        query: malwareinfo
+        malware: "${args.malware}"
+        limit: "${args.limit}"

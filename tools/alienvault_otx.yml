@@ -1,0 +1,64 @@
+provider: alienvault_otx
+name: AlienVault OTX
+description: Anonymous threat intelligence lookups against AlienVault Open Threat Exchange.
+http_header:
+  Accept: application/json
+functions:
+  lookup_ip:
+    description: Fetch general threat intelligence for an IPv4 address.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IPv4 address to look up.
+    request:
+      method: GET
+      url: "https://otx.alienvault.com/api/v1/indicators/IPv4/${args.ip}/general"
+  lookup_domain:
+    description: Fetch general threat intelligence for a domain.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain name to look up.
+    request:
+      method: GET
+      url: "https://otx.alienvault.com/api/v1/indicators/domain/${args.domain}/general"
+  lookup_hash:
+    description: Fetch general threat intelligence for a file hash.
+    args:
+      hash:
+        type: string
+        required: true
+        description: MD5, SHA1, or SHA256 hash of the file to look up.
+    request:
+      method: GET
+      url: "https://otx.alienvault.com/api/v1/indicators/file/${args.hash}/general"
+  lookup_cve:
+    description: Fetch general threat intelligence for a CVE identifier.
+    args:
+      cve:
+        type: string
+        required: true
+        description: CVE identifier to look up, e.g. CVE-2021-44228.
+    request:
+      method: GET
+      url: "https://otx.alienvault.com/api/v1/indicators/CVE/${args.cve}/general"
+  search_pulses:
+    description: Search OTX threat pulses matching a keyword.
+    args:
+      query:
+        type: string
+        required: true
+        description: Keyword to search for across pulse titles and descriptions.
+      limit:
+        type: number
+        required: false
+        default: 10
+        description: Maximum number of pulses to return.
+    request:
+      method: GET
+      url: "https://otx.alienvault.com/api/v1/search/pulses"
+      query:
+        q: "${args.query}"
+        limit: "${args.limit}"

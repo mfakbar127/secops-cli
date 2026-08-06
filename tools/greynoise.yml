@@ -1,0 +1,16 @@
+provider: greynoise
+name: GreyNoise
+description: Flags IPs as mass internet scanners, common benign crawlers, or unknown using GreyNoise's free community dataset.
+http_header:
+  Accept: application/json
+functions:
+  lookup_ip:
+    description: Look up an IP's scanning/benign classification and last-seen activity in GreyNoise Community.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to classify.
+    request:
+      method: GET
+      url: "https://api.greynoise.io/v3/community/${args.ip}"

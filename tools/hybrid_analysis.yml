@@ -46,3 +46,22 @@ functions:
       body:
         url: "${args.url}"
         environment_id: "${args.environment_id}"
+  search_by_hash:
+    description: Check Hybrid Analysis for existing analyses matching a known file hash.
+    args:
+      hash:
+        type: string
+        required: true
+        description: MD5, SHA1, or SHA256 hash of the file to search for.
+    request:
+      method: POST
+      url: https://www.hybrid-analysis.com/api/v2/search/hash
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+      body:
+        hash: "${args.hash}"
+  get_latest_feed:
+    description: Get the most recently processed samples from Hybrid Analysis.
+    request:
+      method: GET
+      url: "https://www.hybrid-analysis.com/api/v2/feed/latest"

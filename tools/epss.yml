@@ -1,0 +1,37 @@
+provider: epss
+name: EPSS
+description: Query exploit likelihood scores for CVEs via the FIRST.org EPSS API.
+functions:
+  score:
+    description: Retrieve EPSS scores for one or more CVE IDs.
+    args:
+      cve:
+        type: string
+        required: true
+        description: One or more CVE IDs, comma-separated for multiple, e.g. 'CVE-2024-3400,CVE-2021-44228'. Returns the probability of exploitation within 30 days and a percentile rank for each.
+    request:
+      method: GET
+      url: https://api.first.org/data/v1/epss
+      query:
+        cve: "${args.cve}"
+
+  top:
+    description: List the CVEs with the highest EPSS scores, optionally filtered by a minimum score.
+    args:
+      limit:
+        type: number
+        required: false
+        default: 20
+        description: Max number of results to return.
+      min_score:
+        type: number
+        required: false
+        default: 0
+        description: Minimum EPSS score filter, 0-1 range, e.g. 0.5 for 50%+ probability.
+    request:
+      method: GET
+      url: https://api.first.org/data/v1/epss
+      query:
+        order: "!epss"
+        limit: "${args.limit}"
+        "epss-gt": "${args.min_score}"

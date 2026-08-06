@@ -1,0 +1,42 @@
+provider: pulsedive
+name: Pulsedive
+description: Anonymous indicator lookups and threat exploration against Pulsedive's public database.
+http_header:
+  Accept: application/json
+functions:
+  lookup_indicator:
+    description: Fetch the risk score and threat context Pulsedive has on file for a single indicator.
+    args:
+      indicator:
+        type: string
+        required: true
+        description: IP address, domain, URL, or hash to look up.
+    request:
+      method: GET
+      url: https://pulsedive.com/api/info.php
+      query:
+        indicator: "${args.indicator}"
+  search:
+    description: Search Pulsedive's indicator database for entries matching a given value.
+    args:
+      query:
+        type: string
+        required: true
+        description: Value to search for across Pulsedive's indicator records.
+    request:
+      method: GET
+      url: https://pulsedive.com/api/search.php
+      query:
+        q: "${args.query}"
+  explore:
+    description: Run an advanced Pulsedive query to surface indicators linked to a given IOC or threat.
+    args:
+      query:
+        type: string
+        required: true
+        description: Advanced query expression, such as ioc=example.com or threat=Zeus.
+    request:
+      method: GET
+      url: https://pulsedive.com/api/explore.php
+      query:
+        q: "${args.query}"

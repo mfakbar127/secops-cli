@@ -14,12 +14,81 @@ functions:
       max_age_in_days:
         type: number
         required: false
-        default: 30
-        description: Maximum age of the IP address in days.
+        default: 90
+        description: Maximum age of the reports to consider, in days.
+      verbose:
+        type: boolean
+        required: false
+        default: false
+        description: Include recent abuse reports and country name in the response.
     request:
       method: GET
       url: https://api.abuseipdb.com/api/v2/check
       query:
         ipAddress: "${args.ip_address}"
-        verbose: true
+        maxAgeInDays: "${args.max_age_in_days}"
+        verbose: "${args.verbose}"
+
+  get_reports:
+    description: Fetch abuse reports submitted for a single IP address.
+    args:
+      ip_address:
+        type: string
+        required: true
+        description: IP address whose reports should be retrieved.
+      max_age_in_days:
+        type: number
+        required: false
+        default: 90
+        description: How far back, in days, to include reports from.
+      limit:
+        type: number
+        required: false
+        default: 25
+        description: Maximum number of reports to return per page.
+    request:
+      method: GET
+      url: https://api.abuseipdb.com/api/v2/reports
+      query:
+        ipAddress: "${args.ip_address}"
+        maxAgeInDays: "${args.max_age_in_days}"
+        perPage: "${args.limit}"
+
+  get_blacklist:
+    description: Retrieve the current list of most-reported malicious IP addresses.
+    args:
+      confidence_minimum:
+        type: number
+        required: false
+        default: 90
+        description: Lowest abuse confidence score an IP must have to be included.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of blacklisted IPs to return.
+    request:
+      method: GET
+      url: https://api.abuseipdb.com/api/v2/blacklist
+      query:
+        confidenceMinimum: "${args.confidence_minimum}"
+        limit: "${args.limit}"
+
+  check_network_block:
+    description: Check an entire CIDR block for reported abuse activity.
+    args:
+      network:
+        type: string
+        required: true
+        description: CIDR-notation network block to check, e.g. 192.168.1.0/24.
+      max_age_in_days:
+        type: number
+        required: false
+        default: 30
+        description: How far back, in days, to consider reports for the block.
+    request:
+      method: GET
+      url: https://api.abuseipdb.com/api/v2/check-block
+      query:
+        network: "${args.network}"
         maxAgeInDays: "${args.max_age_in_days}"

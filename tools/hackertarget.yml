@@ -1,0 +1,40 @@
+provider: hackertarget
+name: HackerTarget
+description: Free-tier network recon lookups (50 requests/day, no key required).
+functions:
+  host_search:
+    description: Enumerate subdomains and their IPs for a domain, returned as CSV lines.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to enumerate subdomains for.
+    request:
+      method: GET
+      url: https://api.hackertarget.com/hostsearch/
+      query:
+        q: "${args.domain}"
+  reverse_ip_lookup:
+    description: List other domains hosted on the same IP address, one per line.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IP address to reverse-lookup shared hosting for.
+    request:
+      method: GET
+      url: https://api.hackertarget.com/reverseiplookup/
+      query:
+        q: "${args.ip}"
+  asn_lookup:
+    description: Fetch ASN ownership details for an IP address or ASN, returned as CSV.
+    args:
+      query:
+        type: string
+        required: true
+        description: IP address or ASN to look up.
+    request:
+      method: GET
+      url: https://api.hackertarget.com/aslookup/
+      query:
+        q: "${args.query}"

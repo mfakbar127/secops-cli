@@ -1,0 +1,45 @@
+provider: hudsonrock
+name: Hudson Rock
+description: Stealer-log intelligence lookups via Hudson Rock's Cavalier OSINT API.
+http_header:
+  Accept: application/json
+functions:
+  search_by_domain:
+    description: Look up stealer-log infections associated with a corporate domain. Requires HUDSONROCK_API_KEY to be configured.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain name to search for associated infected machines.
+    request:
+      method: GET
+      url: https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-domain
+      query:
+        domain: "${args.domain}"
+        api-key: "${env.HUDSONROCK_API_KEY}"
+  search_by_email:
+    description: Look up stealer-log infections associated with a specific email address. Requires HUDSONROCK_API_KEY to be configured.
+    args:
+      email:
+        type: string
+        required: true
+        description: Email address to search for in stealer-log records.
+    request:
+      method: GET
+      url: https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-email
+      query:
+        email: "${args.email}"
+        api-key: "${env.HUDSONROCK_API_KEY}"
+  search_by_ip:
+    description: Look up stealer-log infections associated with a specific IP address. Requires HUDSONROCK_API_KEY to be configured.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IP address to search for in stealer-log records.
+    request:
+      method: GET
+      url: https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-ip
+      query:
+        ip: "${args.ip}"
+        api-key: "${env.HUDSONROCK_API_KEY}"

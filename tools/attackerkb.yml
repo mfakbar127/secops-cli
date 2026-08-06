@@ -1,0 +1,37 @@
+provider: attackerkb
+name: AttackerKB
+description: Vulnerability research lookups against Rapid7 AttackerKB, including community assessments of exploitability and attacker value.
+http_header:
+  Accept: application/json
+  Authorization: "basic ${env.ATTACKERKB_API_KEY}"
+functions:
+  get_topic:
+    description: >-
+      Look up a CVE as an AttackerKB "topic" and return its topic record.
+      Note: AttackerKB requires two separate calls to get assessment data for
+      a CVE — the topic ID returned here must be passed as the topic_id
+      argument to the get_assessments function below; this schema cannot
+      chain the two calls automatically.
+    args:
+      cve_id:
+        type: string
+        required: true
+        description: CVE ID to look up as an AttackerKB topic, e.g. 'CVE-2024-3400'.
+    request:
+      method: GET
+      url: https://api.attackerkb.com/v1/topics
+      query:
+        name: "${args.cve_id}"
+
+  get_assessments:
+    description: Fetch community-contributed assessments for an AttackerKB topic, covering exploitability and attacker value ratings, including Rapid7 analysis.
+    args:
+      topic_id:
+        type: string
+        required: true
+        description: The AttackerKB topic ID returned by get_topic, used to fetch the community assessments/ratings for that vulnerability.
+    request:
+      method: GET
+      url: https://api.attackerkb.com/v1/assessments
+      query:
+        topicId: "${args.topic_id}"

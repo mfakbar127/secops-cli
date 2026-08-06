@@ -79,3 +79,13 @@ functions:
     request:
       method: GET
       url: https://haveibeenpwned.com/api/v3/latestbreach
+  check_password_range:
+    description: Check a password's SHA-1 prefix against the Pwned Passwords k-anonymity range API, returning matching hash suffixes and breach counts without ever sending the full password or hash over the network.
+    args:
+      sha1_prefix:
+        type: string
+        required: true
+        description: First 5 hex characters of the SHA-1 hash of the password to check. Hash the password locally before calling — only this prefix is sent, never the password or full hash. Match the returned suffixes against the remaining hash characters locally to confirm whether the exact password was pwned.
+    request:
+      method: GET
+      url: "https://api.pwnedpasswords.com/range/${args.sha1_prefix}"

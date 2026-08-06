@@ -52,3 +52,44 @@ functions:
     request:
       method: GET
       url: "https://www.virustotal.com/api/v3/ip_addresses/${args.ip_address}"
+  list_subdomains:
+    description: List known subdomains for a domain, from VirusTotal's passive DNS data.
+    args:
+      domain:
+        type: string
+        required: true
+        description: Domain to enumerate subdomains for.
+      limit:
+        type: number
+        required: false
+        default: 40
+        description: Maximum number of subdomains to return.
+    request:
+      method: GET
+      url: "https://www.virustotal.com/api/v3/domains/${args.domain}/subdomains"
+      query:
+        limit: "${args.limit}"
+  submit_url_scan:
+    description: Submit a URL to VirusTotal for scanning. Response includes an analysis ID; pass it to get_url_analysis to retrieve results.
+    args:
+      url:
+        type: string
+        required: true
+        description: URL to submit for scanning.
+    request:
+      method: POST
+      url: https://www.virustotal.com/api/v3/urls
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+      body:
+        url: "${args.url}"
+  get_url_analysis:
+    description: Fetch results of a previously submitted URL scan by analysis ID. Follow-up call after submit_url_scan.
+    args:
+      analysis_id:
+        type: string
+        required: true
+        description: Analysis ID returned by submit_url_scan.
+    request:
+      method: GET
+      url: "https://www.virustotal.com/api/v3/analyses/${args.analysis_id}"

@@ -1,0 +1,66 @@
+provider: ransomware_live
+name: Ransomware.live
+description: Public ransomware leak-site tracker for victim postings and threat group intelligence.
+http_header:
+  Accept: application/json
+functions:
+  recent_victims:
+    description: Fetch the most recently posted victims across all tracked ransomware leak sites.
+    request:
+      method: GET
+      url: "https://api.ransomware.live/v2/recentvictims"
+  list_groups:
+    description: List all ransomware groups currently tracked by the service.
+    request:
+      method: GET
+      url: "https://api.ransomware.live/v2/groups"
+  get_group:
+    description: Retrieve profile details for a single tracked ransomware group.
+    args:
+      name:
+        type: string
+        required: true
+        description: Name of the ransomware group to look up.
+    request:
+      method: GET
+      url: "https://api.ransomware.live/v2/group/${args.name}"
+  get_group_victims:
+    description: List victims claimed by a single tracked ransomware group.
+    args:
+      name:
+        type: string
+        required: true
+        description: Name of the ransomware group whose victims to list.
+    request:
+      method: GET
+      url: "https://api.ransomware.live/v2/groupvictims/${args.name}"
+  search_victims:
+    description: Search all tracked victim postings for a matching keyword.
+    args:
+      keyword:
+        type: string
+        required: true
+        description: Term to search for across victim postings.
+    request:
+      method: GET
+      url: "https://api.ransomware.live/v2/searchvictims/${args.keyword}"
+  victims_by_country:
+    description: List victims filtered to a specific country.
+    args:
+      country_code:
+        type: string
+        required: true
+        description: 2-letter ISO country code, uppercase, e.g. "US".
+    request:
+      method: GET
+      url: "https://api.ransomware.live/v2/countryvictims/${args.country_code}"
+  victims_by_sector:
+    description: List victims filtered to a specific industry sector.
+    args:
+      sector:
+        type: string
+        required: true
+        description: Industry sector name to filter victims by.
+    request:
+      method: GET
+      url: "https://api.ransomware.live/v2/sectorvictims/${args.sector}"

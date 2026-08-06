@@ -1,0 +1,100 @@
+provider: intelx
+name: IntelX
+description: Search leaked data, dark web sources, and public records via the IntelligenceX API.
+http_header:
+  x-key: "${env.INTELX_API_KEY}"
+  Content-Type: application/json
+  Accept: application/json
+functions:
+  search:
+    description: Kick off an IntelligenceX search for a term and get back a search ID for get_search_results; requires INTELX_API_KEY.
+    args:
+      term:
+        type: string
+        required: true
+        description: Term to search for, such as an email address, domain, IP address, or Bitcoin wallet.
+      max_results:
+        type: number
+        required: false
+        default: 100
+        description: Upper bound on how many results the search job should collect.
+    request:
+      method: POST
+      url: "https://2.intelx.io/intelligent/search"
+      body:
+        term: "${args.term}"
+        maxresults: "${args.max_results}"
+        media: 0
+        timeout: 10
+  get_search_results:
+    description: Retrieve a page of results for a search previously started with search; requires INTELX_API_KEY.
+    args:
+      id:
+        type: string
+        required: true
+        description: Search ID returned by the search function.
+      offset:
+        type: number
+        required: false
+        default: 0
+        description: Number of results to skip before the returned page starts.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of results to include in the returned page.
+    request:
+      method: GET
+      url: "https://2.intelx.io/intelligent/search/result"
+      query:
+        id: "${args.id}"
+        offset: "${args.offset}"
+        limit: "${args.limit}"
+  phonebook_search:
+    description: Kick off an IntelligenceX phonebook search that surfaces emails, domains, and URLs tied to a term, returning a search ID for get_phonebook_results; requires INTELX_API_KEY.
+    args:
+      term:
+        type: string
+        required: true
+        description: Term to search for, such as a domain name or organization name.
+      target:
+        type: number
+        required: false
+        default: 0
+        description: Result type filter -- 0 for all types, 1 to restrict to emails, 2 to domains, 3 to URLs.
+      max_results:
+        type: number
+        required: false
+        default: 100
+        description: Upper bound on how many results the phonebook job should collect.
+    request:
+      method: POST
+      url: "https://2.intelx.io/phonebook/search"
+      body:
+        term: "${args.term}"
+        target: "${args.target}"
+        maxresults: "${args.max_results}"
+  get_phonebook_results:
+    description: Retrieve a page of results for a phonebook search previously started with phonebook_search; requires INTELX_API_KEY.
+    args:
+      id:
+        type: string
+        required: true
+        description: Search ID returned by the phonebook_search function.
+      offset:
+        type: number
+        required: false
+        default: 0
+        description: Number of results to skip before the returned page starts.
+      limit:
+        type: number
+        required: false
+        default: 100
+        description: Maximum number of results to include in the returned page.
+    request:
+      method: GET
+      url: "https://2.intelx.io/phonebook/search/result"
+      query:
+        id: "${args.id}"
+        offset: "${args.offset}"
+        limit: "${args.limit}"

@@ -1,0 +1,51 @@
+provider: bgp
+name: BGP/ASN
+description: Autonomous system and prefix lookups using bgpview.io, no authentication required.
+functions:
+  asn_info:
+    description: Look up an autonomous system's name, description, country, and registration contacts.
+    args:
+      asn:
+        type: number
+        required: true
+        description: Autonomous system number, e.g. 13335.
+    request:
+      method: GET
+      url: "https://api.bgpview.io/asn/${args.asn}"
+
+  asn_prefixes:
+    description: List the IPv4 and IPv6 prefixes announced by an autonomous system.
+    args:
+      asn:
+        type: number
+        required: true
+        description: Autonomous system number, e.g. 13335.
+    request:
+      method: GET
+      url: "https://api.bgpview.io/asn/${args.asn}/prefixes"
+
+  lookup_ip:
+    description: Look up the announced prefix(es) covering an IP address and its RIR allocation details.
+    args:
+      ip:
+        type: string
+        required: true
+        description: IPv4 or IPv6 address to look up.
+    request:
+      method: GET
+      url: "https://api.bgpview.io/ip/${args.ip}"
+
+  lookup_prefix:
+    description: Look up the autonomous systems announcing a CIDR block, with their name, country, and RIR.
+    args:
+      prefix:
+        type: string
+        required: true
+        description: Network address portion of the CIDR block, e.g. 1.1.1.0.
+      cidr:
+        type: number
+        required: true
+        description: CIDR prefix length, e.g. 24.
+    request:
+      method: GET
+      url: "https://api.bgpview.io/prefix/${args.prefix}/${args.cidr}"

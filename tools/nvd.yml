@@ -1,0 +1,118 @@
+provider: nvd
+name: NVD
+description: Vulnerability and CPE lookups against the National Vulnerability Database, no authentication required.
+functions:
+  search:
+    description: Search CVE records by keyword, severity, weakness type, or last-modified date range.
+    args:
+      keyword:
+        type: string
+        required: false
+        default: ""
+        description: Free-text keyword to search for within CVE descriptions.
+      severity:
+        type: string
+        required: false
+        default: ""
+        description: "CVSS v3 severity to filter by. Allowed values: CRITICAL, HIGH, MEDIUM, LOW (uppercase, not validated by this schema)."
+      cwe_id:
+        type: string
+        required: false
+        default: ""
+        description: "Restrict results to CVEs tagged with a specific weakness ID, e.g. 'CWE-79'."
+      start_date:
+        type: string
+        required: false
+        default: ""
+        description: "Start of the last-modified date range, as an ISO 8601 timestamp, e.g. '2024-01-01T00:00:00.000Z'."
+      end_date:
+        type: string
+        required: false
+        default: ""
+        description: "End of the last-modified date range, as an ISO 8601 timestamp, e.g. '2024-01-31T00:00:00.000Z'."
+      limit:
+        type: number
+        required: false
+        default: 20
+        description: Maximum number of CVEs to return, up to 100.
+    request:
+      method: GET
+      url: https://services.nvd.nist.gov/rest/json/cves/2.0
+      query:
+        keywordSearch: "${args.keyword}"
+        cvssV3Severity: "${args.severity}"
+        cweId: "${args.cwe_id}"
+        lastModStartDate: "${args.start_date}"
+        lastModEndDate: "${args.end_date}"
+        resultsPerPage: "${args.limit}"
+
+  get:
+    description: Fetch the full record for a single CVE by its identifier.
+    args:
+      cve_id:
+        type: string
+        required: true
+        description: "CVE identifier to look up, e.g. 'CVE-2024-3400'."
+    request:
+      method: GET
+      url: https://services.nvd.nist.gov/rest/json/cves/2.0
+      query:
+        cveId: "${args.cve_id}"
+
+  search_by_product:
+    description: Search CVE records affecting a given vendor or product name, matched via CPE data.
+    args:
+      keyword:
+        type: string
+        required: true
+        description: "Vendor or product name to search for, e.g. 'Apache Log4j'."
+      limit:
+        type: number
+        required: false
+        default: 20
+        description: Maximum number of CVEs to return.
+    request:
+      method: GET
+      url: https://services.nvd.nist.gov/rest/json/cves/2.0
+      query:
+        keywordSearch: "${args.keyword}"
+        keywordExactMatch: ""
+        resultsPerPage: "${args.limit}"
+
+  cpe_search:
+    description: Search the CPE dictionary for platform entries matching a product or vendor keyword.
+    args:
+      keyword:
+        type: string
+        required: true
+        description: Product or vendor keyword to search for within CPE names.
+      limit:
+        type: number
+        required: false
+        default: 20
+        description: Maximum number of CPE entries to return.
+    request:
+      method: GET
+      url: https://services.nvd.nist.gov/rest/json/cpes/2.0
+      query:
+        keywordSearch: "${args.keyword}"
+        resultsPerPage: "${args.limit}"
+
+  cpe_match_by_cve:
+    description: Fetch the CPE match criteria associated with a specific CVE.
+    args:
+      cve_id:
+        type: string
+        required: true
+        description: "CVE identifier to fetch CPE match criteria for, e.g. 'CVE-2024-3400'."
+      limit:
+        type: number
+        required: false
+        default: 50
+        description: Maximum number of CPE match records to return.
+    request:
+      method: GET
+      url: https://services.nvd.nist.gov/rest/json/cpematch/2.0
+      query:
+        cveId: "${args.cve_id}"
+        resultsPerPage: "${args.limit}"

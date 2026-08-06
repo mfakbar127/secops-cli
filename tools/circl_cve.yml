@@ -1,0 +1,14 @@
+provider: circl_cve
+name: CIRCL CVE Search
+description: Vulnerability record lookups via CIRCL's CVE Search service, no authentication required.
+functions:
+  get:
+    description: Fetch the full record for a CVE, including CAPEC attack patterns, affected products, and access/impact vectors.
+    args:
+      cve_id:
+        type: string
+        required: true
+        description: CVE identifier, e.g. 'CVE-2024-3400'.
+    request:
+      method: GET
+      url: "https://cve.circl.lu/api/cve/${args.cve_id}"

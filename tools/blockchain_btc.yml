@@ -1,0 +1,52 @@
+provider: blockchain_btc
+name: Blockchain BTC
+description: Bitcoin address, balance, transaction, and abuse-report lookups across blockchain.info and ChainAbuse.
+http_header:
+  Accept: application/json
+functions:
+  lookup_address:
+    description: Retrieve a Bitcoin address's balance and transaction history from blockchain.info.
+    args:
+      address:
+        type: string
+        required: true
+        description: Bitcoin address to look up.
+    request:
+      method: GET
+      url: "https://blockchain.info/rawaddr/${args.address}"
+      query:
+        limit: 50
+  get_balance:
+    description: Fetch the current balance in satoshis for a Bitcoin address from blockchain.info.
+    args:
+      address:
+        type: string
+        required: true
+        description: Bitcoin address to check the balance for.
+    request:
+      method: GET
+      url: "https://blockchain.info/balance"
+      query:
+        active: "${args.address}"
+  lookup_transaction:
+    description: Retrieve details of a Bitcoin transaction by its hash from blockchain.info.
+    args:
+      txhash:
+        type: string
+        required: true
+        description: Transaction hash to look up.
+    request:
+      method: GET
+      url: "https://blockchain.info/rawtx/${args.txhash}"
+  check_abuse_reports:
+    description: Check ChainAbuse for scam or abuse reports filed against a Bitcoin address.
+    args:
+      address:
+        type: string
+        required: true
+        description: Bitcoin address to check for abuse reports.
+    request:
+      method: GET
+      url: "https://api.chainabuse.com/v0/reports"
+      query:
+        address: "${args.address}"

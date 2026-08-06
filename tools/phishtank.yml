@@ -1,0 +1,19 @@
+provider: phishtank
+name: PhishTank
+description: Community-run database of confirmed and verified phishing URLs.
+functions:
+  check_url:
+    description: Check whether a URL matches a verified entry in PhishTank's phishing database.
+    args:
+      url:
+        type: string
+        required: true
+        description: Full URL to check against PhishTank's phishing database.
+    request:
+      method: POST
+      url: https://checkurl.phishtank.com/checkurl/
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+      body:
+        url: "${args.url}"
+        format: json
